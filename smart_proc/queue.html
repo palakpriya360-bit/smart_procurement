@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Live Queue</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌾 ProcureSmart
+    </div>
+
+    <div class="nav-links">
+
+        <a href="index.html">Home</a>
+
+        <a href="farmer.html">Farmer</a>
+
+        <a href="centre.html">Centre</a>
+
+    </div>
+
+</nav>
+
+
+<section class="features">
+
+    <h1>🕐 Live Procurement Queue</h1>
+
+    <br>
+
+
+    <div class="feature-grid">
+
+
+        <div class="feature-card">
+
+            <div class="icon">
+                🎟️
+            </div>
+
+            <h3>Your Token</h3>
+
+            <h1 id="token">
+                --
+            </h1>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="icon">
+                👨‍🌾
+            </div>
+
+            <h3>Currently Serving</h3>
+
+            <h1 id="currentToken">
+                35
+            </h1>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="icon">
+                🕐
+            </div>
+
+            <h3>People Ahead</h3>
+
+            <h1 id="peopleAhead">
+                --
+            </h1>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="icon">
+                ⏱️
+            </div>
+
+            <h3>Estimated Wait</h3>
+
+            <h1 id="waitTime">
+                --
+            </h1>
+
+            <p>minutes</p>
+
+        </div>
+
+
+    </div>
+
+
+    <br>
+
+
+    <div class="feature-card">
+
+        <h2>🟢 Queue Status</h2>
+
+        <p id="queueStatus">
+            Queue is moving normally.
+        </p>
+
+    </div>
+
+</section>
+
+
+<script>
+
+const booking =
+    JSON.parse(
+        localStorage.getItem("booking")
+    );
+
+
+if (booking) {
+
+    document.getElementById("token")
+        .innerText =
+        "#" + booking.token;
+
+
+    let current =
+        35;
+
+
+    let people =
+        Math.max(
+            booking.token - current - 1,
+            0
+        );
+
+
+    document.getElementById(
+        "peopleAhead"
+    ).innerText = people;
+
+
+    document.getElementById(
+        "waitTime"
+    ).innerText =
+        people * 5;
+
+}
+
+</script>
+
+</body>
+
+</html>

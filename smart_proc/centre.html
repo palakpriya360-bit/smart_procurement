@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Centre Dashboard - ProcureSmart</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+
+<!-- NAVIGATION -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌾 ProcureSmart
+    </div>
+
+    <div class="nav-links">
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="farmer.html">
+            Farmer
+        </a>
+
+        <a href="centre.html">
+            Centre
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- CENTRE DASHBOARD -->
+
+<section class="features">
+
+    <h1>🏢 Procurement Centre Dashboard</h1>
+
+    <p>
+        Manage farmer arrivals, queues and
+        procurement activities.
+    </p>
+
+    <br>
+
+
+    <!-- STATISTICS -->
+
+    <div class="feature-grid">
+
+
+        <div class="feature-card">
+
+            <div class="icon">
+                👨‍🌾
+            </div>
+
+            <h3>
+                Today's Farmers
+            </h3>
+
+            <h1>
+                128
+            </h1>
+
+            <p>
+                Expected today
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="icon">
+                🕐
+            </div>
+
+            <h3>
+                Waiting
+            </h3>
+
+            <h1 id="waiting">
+                26
+            </h1>
+
+            <p>
+                Farmers in queue
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="icon">
+                ✅
+            </div>
+
+            <h3>
+                Completed
+            </h3>
+
+            <h1>
+                72
+            </h1>
+
+            <p>
+                Completed today
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="icon">
+                📊
+            </div>
+
+            <h3>
+                Capacity
+            </h3>
+
+            <h1>
+                87%
+            </h1>
+
+            <p>
+                Centre utilization
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <br><br>
+
+
+    <!-- LIVE QUEUE -->
+
+    <div class="feature-card">
+
+        <h2>
+            🕐 Live Queue
+        </h2>
+
+        <br>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Token
+                    </th>
+
+                    <th>
+                        Farmer
+                    </th>
+
+                    <th>
+                        Produce
+                    </th>
+
+                    <th>
+                        Quantity
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="queueTable">
+
+                <tr>
+
+                    <td>
+                        #35
+                    </td>
+
+                    <td>
+                        Rajesh
+                    </td>
+
+                    <td>
+                        Paddy
+                    </td>
+
+                    <td>
+                        250 kg
+                    </td>
+
+                    <td>
+                        🟢 Processing
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="small-btn"
+                            onclick="serveFarmer(35)"
+                        >
+                            Serve
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        #36
+                    </td>
+
+                    <td>
+                        Suresh
+                    </td>
+
+                    <td>
+                        Paddy
+                    </td>
+
+                    <td>
+                        180 kg
+                    </td>
+
+                    <td>
+                        🟡 Waiting
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="small-btn"
+                            onclick="serveFarmer(36)"
+                        >
+                            Serve
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        #37
+                    </td>
+
+                    <td>
+                        Anita
+                    </td>
+
+                    <td>
+                        Wheat
+                    </td>
+
+                    <td>
+                        300 kg
+                    </td>
+
+                    <td>
+                        🟡 Waiting
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="small-btn"
+                            onclick="serveFarmer(37)"
+                        >
+                            Serve
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        #38
+                    </td>
+
+                    <td>
+                        Mohan
+                    </td>
+
+                    <td>
+                        Maize
+                    </td>
+
+                    <td>
+                        220 kg
+                    </td>
+
+                    <td>
+                        🟡 Waiting
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="small-btn"
+                            onclick="serveFarmer(38)"
+                        >
+                            Serve
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <br><br>
+
+
+    <!-- CENTRE CAPACITY -->
+
+    <div class="feature-card">
+
+        <h2>
+            🏢 Centre Capacity
+        </h2>
+
+        <br>
+
+        <p>
+            Daily Capacity
+        </p>
+
+        <h2>
+            150 Farmers
+        </h2>
+
+        <br>
+
+        <p>
+            Current Arrivals
+        </p>
+
+        <h2>
+            128 Farmers
+        </h2>
+
+        <br>
+
+        <p>
+            Remaining Capacity
+        </p>
+
+        <h2 id="remainingCapacity">
+            22 Farmers
+        </h2>
+
+    </div>
+
+
+    <br><br>
+
+
+    <!-- AI PREDICTION -->
+
+    <div class="feature-card">
+
+        <h2>
+            🤖 AI Congestion Prediction
+        </h2>
+
+        <br>
+
+        <p>
+            Expected peak period:
+        </p>
+
+        <h2>
+            11:00 AM – 1:00 PM
+        </h2>
+
+        <br>
+
+        <p>
+            Expected arrivals:
+            <strong>64 farmers</strong>
+        </p>
+
+        <br>
+
+        <p>
+            ⚠️ High congestion predicted.
+        </p>
+
+        <br>
+
+        <button
+            class="btn"
+            onclick="showRecommendation()"
+        >
+            View Recommendation
+        </button>
+
+        <p
+            id="recommendation"
+            style="margin-top:20px;"
+        ></p>
+
+    </div>
+
+
+</section>
+
+
+<script>
+
+function serveFarmer(token) {
+
+    alert(
+        "Token #" +
+        token +
+        " is now being served."
+    );
+
+}
+
+
+function showRecommendation() {
+
+    document.getElementById(
+        "recommendation"
+    ).innerHTML =
+
+        "💡 Recommendation: " +
+
+        "Open an additional processing counter " +
+
+        "between 11:00 AM and 1:00 PM.";
+
+}
+
+</script>
+
+
+</body>
+
+</html>
