@@ -14,7 +14,13 @@
 
 </head>
 
+
 <body>
+
+
+<!-- =========================================================
+     NAVIGATION
+========================================================= -->
 
 <nav class="navbar">
 
@@ -24,120 +30,307 @@
 
     <div class="nav-links">
 
-        <a href="index.html">Home</a>
+        <a href="index.html">
+            Home
+        </a>
 
-        <a href="farmer.html">Farmer</a>
+        <a href="farmer.html">
+            Farmer
+        </a>
 
-        <a href="centre.html">Centre</a>
+        <a href="centre.html">
+            Centre
+        </a>
 
     </div>
 
 </nav>
 
 
+<!-- =========================================================
+     FARMER PORTAL
+========================================================= -->
+
 <section class="features">
 
-    <h1>👨‍🌾 Farmer Portal</h1>
+    <h1>
+        👨‍🌾 Farmer Portal
+    </h1>
 
     <p>
-        Book your procurement slot without waiting
-        unnecessarily at the centre.
+        Find the nearest and most suitable procurement centre
+        and book your procurement slot.
     </p>
 
     <br>
 
 
+    <!-- =====================================================
+         BOOKING CARD
+    ====================================================== -->
+
     <div class="feature-card">
 
-        <h2>Book Procurement Slot</h2>
+        <h2>
+            Smart Procurement Booking
+        </h2>
 
         <br>
 
+
         <form id="bookingForm">
 
-            <label>Farmer Name</label>
+
+            <!-- =================================================
+                 FARMER NAME
+            ================================================== -->
+
+            <label for="farmerName">
+                Farmer Name
+            </label>
 
             <br>
 
             <input
                 type="text"
                 id="farmerName"
+                placeholder="Enter your name"
                 required
             >
 
-            <br><br>
+            <br>
+            <br>
 
 
-            <label>Mobile Number</label>
+            <!-- =================================================
+                 MOBILE
+            ================================================== -->
+
+            <label for="mobile">
+                Mobile Number
+            </label>
 
             <br>
 
             <input
                 type="tel"
                 id="mobile"
+                placeholder="Enter 10-digit mobile number"
+                pattern="[0-9]{10}"
+                maxlength="10"
                 required
             >
 
-            <br><br>
+            <br>
+            <br>
 
 
-            <label>Produce</label>
+            <!-- =================================================
+                 CROP
+            ================================================== -->
+
+            <label for="produce">
+                Produce
+            </label>
 
             <br>
 
-            <select id="produce">
+            <select id="produce" required>
 
-                <option>Paddy</option>
+                <option value="">
+                    Select Produce
+                </option>
 
-                <option>Wheat</option>
+                <option value="Rice">
+                    Rice
+                </option>
 
-                <option>Maize</option>
+                <option value="Paddy">
+                    Paddy
+                </option>
 
-                <option>Other</option>
+                <option value="Wheat">
+                    Wheat
+                </option>
+
+                <option value="Maize">
+                    Maize
+                </option>
+
+                <option value="Mustard">
+                    Mustard
+                </option>
+
+                <option value="Coconut">
+                    Coconut
+                </option>
+
+                <option value="Groundnut">
+                    Groundnut
+                </option>
 
             </select>
 
-            <br><br>
+            <br>
+            <br>
 
 
-            <label>Quantity (kg)</label>
+            <!-- =================================================
+                 QUANTITY
+            ================================================== -->
+
+            <label for="quantity">
+                Quantity (Quintals)
+            </label>
 
             <br>
 
             <input
                 type="number"
                 id="quantity"
-                min="1"
+                min="0.1"
+                step="0.1"
+                placeholder="Enter quantity in quintals"
                 required
             >
 
-            <br><br>
+            <br>
+            <br>
 
 
-            <label>Procurement Centre</label>
+            <!-- =================================================
+                 GPS LOCATION
+            ================================================== -->
+
+            <label>
+                📍 Your Current Location
+            </label>
 
             <br>
 
-            <select id="centre">
+            <button
+                type="button"
+                id="locationButton"
+                class="btn"
+                onclick="getFarmerLocation()"
+            >
+                📍 Detect My Location
+            </button>
 
-                <option>
-                    Centre A — 35 min wait
-                </option>
+            <br>
+            <br>
 
-                <option>
-                    Centre B — 12 min wait ⭐ Recommended
-                </option>
 
-                <option>
-                    Centre C — 42 min wait
+            <p id="locationStatus">
+
+                📍 Location not detected yet.
+
+            </p>
+
+
+            <!-- Hidden coordinate fields -->
+
+            <input
+                type="hidden"
+                id="latitude"
+            >
+
+            <input
+                type="hidden"
+                id="longitude"
+            >
+
+
+            <br>
+
+
+            <!-- =================================================
+                 OPTIONAL LOCATION TEXT
+            ================================================== -->
+
+            <label for="location">
+                Location Name
+            </label>
+
+            <br>
+
+            <input
+                type="text"
+                id="location"
+                placeholder="Example: Bhubaneswar"
+            >
+
+            <br>
+            <br>
+
+
+            <!-- =================================================
+                 DATABASE STATUS
+            ================================================== -->
+
+            <p id="databaseStatus">
+
+                🔄 Loading procurement centre database...
+
+            </p>
+
+            <br>
+
+
+            <!-- =================================================
+                 RECOMMENDED CENTRE
+            ================================================== -->
+
+            <label for="centre">
+                Recommended Procurement Centre
+            </label>
+
+            <br>
+
+            <select
+                id="centre"
+                required
+            >
+
+                <option value="">
+                    Enter quantity and detect location first
                 </option>
 
             </select>
 
-            <br><br>
+            <br>
+            <br>
 
 
-            <label>Preferred Date</label>
+            <!-- =================================================
+                 SMART RECOMMENDATION
+            ================================================== -->
+
+            <div
+                id="recommendationBox"
+                style="display:none;"
+            >
+
+                <h3>
+                    ⭐ Smart Recommendation
+                </h3>
+
+                <br>
+
+                <p id="recommendationText"></p>
+
+            </div>
+
+            <br>
+
+
+            <!-- =================================================
+                 DATE
+            ================================================== -->
+
+            <label for="date">
+                Preferred Date
+            </label>
 
             <br>
 
@@ -147,36 +340,48 @@
                 required
             >
 
-            <br><br>
+            <br>
+            <br>
 
 
-            <label>Time Slot</label>
+            <!-- =================================================
+                 TIME SLOT
+            ================================================== -->
+
+            <label for="slot">
+                Available Time Slot
+            </label>
 
             <br>
 
-            <select id="slot">
+            <select
+                id="slot"
+                required
+            >
 
-                <option>09:00 AM</option>
-
-                <option>10:00 AM</option>
-
-                <option>11:00 AM</option>
-
-                <option>12:00 PM</option>
-
-                <option>01:00 PM</option>
+                <option value="">
+                    Select centre first
+                </option>
 
             </select>
 
-            <br><br>
+            <br>
+            <br>
 
+
+            <!-- =================================================
+                 BOOK BUTTON
+            ================================================== -->
 
             <button
                 type="submit"
                 class="btn"
             >
-                📅 Book Slot
+
+                📅 Book Smart Slot
+
             </button>
+
 
         </form>
 
@@ -185,7 +390,21 @@
 </section>
 
 
+<!-- =========================================================
+     XLSX LIBRARY
+========================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js">
+</script>
+
+
+<!-- =========================================================
+     PROCURESMART JAVASCRIPT
+========================================================= -->
+
 <script src="script.js"></script>
+
 
 </body>
 
