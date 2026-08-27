@@ -47,6 +47,7 @@
 </nav>
 
 
+
 <!-- =========================================================
      FARMER PORTAL
 ========================================================= -->
@@ -58,7 +59,7 @@
     </h1>
 
     <p>
-        Find the nearest and most suitable procurement centre
+        Find the nearest suitable procurement centre
         and book your procurement slot.
     </p>
 
@@ -72,7 +73,7 @@
     <div class="feature-card">
 
         <h2>
-            Smart Procurement Booking
+            📅 Smart Procurement Booking
         </h2>
 
         <br>
@@ -102,6 +103,7 @@
             <br>
 
 
+
             <!-- =================================================
                  MOBILE
             ================================================== -->
@@ -125,12 +127,13 @@
             <br>
 
 
+
             <!-- =================================================
                  CROP
             ================================================== -->
 
             <label for="produce">
-                Produce
+                🌾 Produce
             </label>
 
             <br>
@@ -143,10 +146,6 @@
 
                 <option value="Rice">
                     Rice
-                </option>
-
-                <option value="Paddy">
-                    Paddy
                 </option>
 
                 <option value="Wheat">
@@ -169,10 +168,63 @@
                     Groundnut
                 </option>
 
+                <option value="Ragi">
+                    Ragi
+                </option>
+
+                <option value="Banana">
+                    Banana
+                </option>
+
+                <option value="Soybean">
+                    Soybean
+                </option>
+
+                <option value="Pulses">
+                    Pulses
+                </option>
+
+                <option value="Potato">
+                    Potato
+                </option>
+
+                <option value="Bajra">
+                    Bajra
+                </option>
+
+                <option value="Chilli">
+                    Chilli
+                </option>
+
+                <option value="Ginger">
+                    Ginger
+                </option>
+
+                <option value="Cotton">
+                    Cotton
+                </option>
+
+                <option value="Apple">
+                    Apple
+                </option>
+
+                <option value="Turmeric">
+                    Turmeric
+                </option>
+
+                <option value="Sugarcane">
+                    Sugarcane
+                </option>
+
+                <option value="Pineapple">
+                    Pineapple
+                </option>
+
             </select>
 
             <br>
             <br>
+
 
 
             <!-- =================================================
@@ -180,7 +232,7 @@
             ================================================== -->
 
             <label for="quantity">
-                Quantity (Quintals)
+                📦 Quantity (Quintals)
             </label>
 
             <br>
@@ -198,21 +250,21 @@
             <br>
 
 
+
             <!-- =================================================
                  GPS LOCATION
             ================================================== -->
 
             <label>
-                📍 Your Current Location
+                📍 Your GPS Location
             </label>
 
             <br>
 
             <button
                 type="button"
-                id="locationButton"
                 class="btn"
-                onclick="getFarmerLocation()"
+                id="gpsButton"
             >
                 📍 Detect My Location
             </button>
@@ -220,48 +272,21 @@
             <br>
             <br>
 
-
-            <p id="locationStatus">
+            <div
+                id="gpsStatus"
+                style="
+                    padding:15px;
+                    background:#f5f5f5;
+                    border-radius:10px;
+                "
+            >
 
                 📍 Location not detected yet.
 
-            </p>
-
-
-            <!-- Hidden coordinate fields -->
-
-            <input
-                type="hidden"
-                id="latitude"
-            >
-
-            <input
-                type="hidden"
-                id="longitude"
-            >
-
+            </div>
 
             <br>
 
-
-            <!-- =================================================
-                 OPTIONAL LOCATION TEXT
-            ================================================== -->
-
-            <label for="location">
-                Location Name
-            </label>
-
-            <br>
-
-            <input
-                type="text"
-                id="location"
-                placeholder="Example: Bhubaneswar"
-            >
-
-            <br>
-            <br>
 
 
             <!-- =================================================
@@ -277,12 +302,15 @@
             <br>
 
 
+
             <!-- =================================================
                  RECOMMENDED CENTRE
             ================================================== -->
 
             <label for="centre">
-                Recommended Procurement Centre
+
+                🏢 Recommended Procurement Centre
+
             </label>
 
             <br>
@@ -293,7 +321,9 @@
             >
 
                 <option value="">
-                    Enter quantity and detect location first
+
+                    Detecting suitable centres...
+
                 </option>
 
             </select>
@@ -302,13 +332,20 @@
             <br>
 
 
+
             <!-- =================================================
                  SMART RECOMMENDATION
             ================================================== -->
 
             <div
                 id="recommendationBox"
-                style="display:none;"
+                style="
+                    display:none;
+                    background:#e8f5e9;
+                    padding:20px;
+                    border-radius:15px;
+                    margin-top:15px;
+                "
             >
 
                 <h3>
@@ -324,12 +361,15 @@
             <br>
 
 
+
             <!-- =================================================
                  DATE
             ================================================== -->
 
             <label for="date">
-                Preferred Date
+
+                📅 Preferred Date
+
             </label>
 
             <br>
@@ -344,12 +384,15 @@
             <br>
 
 
+
             <!-- =================================================
-                 TIME SLOT
+                 AVAILABLE TIME SLOT
             ================================================== -->
 
             <label for="slot">
-                Available Time Slot
+
+                🕐 Available Time Slot
+
             </label>
 
             <br>
@@ -360,13 +403,16 @@
             >
 
                 <option value="">
-                    Select centre first
+
+                    Select centre and date first
+
                 </option>
 
             </select>
 
             <br>
             <br>
+
 
 
             <!-- =================================================
@@ -390,6 +436,7 @@
 </section>
 
 
+
 <!-- =========================================================
      XLSX LIBRARY
 ========================================================= -->
@@ -399,8 +446,9 @@
 </script>
 
 
+
 <!-- =========================================================
-     PROCURESMART JAVASCRIPT
+     OUR JAVASCRIPT
 ========================================================= -->
 
 <script src="script.js"></script>
