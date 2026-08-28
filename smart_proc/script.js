@@ -16,6 +16,8 @@ let userLatitude = null;
 
 let userLongitude = null;
 
+let procurementMap = null;
+
 
 // ============================================================
 // PAGE LOAD
@@ -30,11 +32,13 @@ document.addEventListener(
         const bookingForm =
             document.getElementById("bookingForm");
 
-        if (!bookingForm) {
-            return;
+        if (bookingForm) {
+            initializeFarmerPage();
         }
 
-        initializeFarmerPage();
+        if (document.getElementById("indiaMap")) {
+            initializeCentreMap();
+        }
 
     }
 );
@@ -43,6 +47,104 @@ document.addEventListener(
 // ============================================================
 // INITIALIZE FARMER PAGE
 // ============================================================
+
+async function initializeCentreMap() {
+
+    if (typeof L === "undefined" || typeof XLSX === "undefined") {
+        return;
+    }
+
+    procurementMap = L.map("indiaMap", { zoomControl: true }).setView([22.5, 79], 4.6);
+
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution: "&copy; OpenStreetMap &copy; CARTO",
+        maxZoom: 18
+    }).addTo(procurementMap);
+
+    try {
+        const response = await fetch("proc_data.xlsx");
+        const workbook = XLSX.read(await response.arrayBuffer(), { type: "array", cellDates: true });
+        procurementCentres = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: "" })
+            .filter(function (centre) {
+                return centre.centre_id && Number.isFinite(Number(centre.latitude)) && Number.isFinite(Number(centre.longitude));
+            });
+
+        populateMapFilters();
+        renderCentreMap();
+    } catch (error) {
+        document.getElementById("predictionList").innerHTML = "<p class=\"loading-copy\">Centre data could not be loaded.</p>";
+        console.error("Map database error:", error);
+    }
+}
+
+function centreLoadScore(centre) {
+    const capacity = Number(centre.capacity_quintals) || 0;
+    const booked = Number(centre.booked_quintals) || 0;
+    const totalSlots = Number(centre.total_slots) || 0;
+    const bookedSlots = Number(centre.booked_slots) || 0;
+    const demand = Number(centre.requirement_quintals) || 0;
+    const capacityLoad = capacity ? booked / capacity : 0;
+    const slotLoad = totalSlots ? bookedSlots / totalSlots : 0;
+    const demandLoad = capacity ? demand / capacity : 0;
+    return Math.round(Math.min(100, (capacityLoad * 45) + (slotLoad * 35) + (demandLoad * 20)));
+}
+
+function centreLoadState(score, centre) {
+    const status = normalizeText(centre.availability_status);
+    if (status.includes("closed") || status.includes("unavailable")) return "quiet";
+    if (score >= 65) return "busy";
+    if (score >= 30) return "active";
+    return "quiet";
+}
+
+function populateMapFilters() {
+    const cropSelect = document.getElementById("mapCrop");
+    const stateSelect = document.getElementById("mapState");
+    [...new Set(procurementCentres.map(c => c.crop).filter(Boolean))].sort().forEach(function (crop) {
+        cropSelect.appendChild(new Option(crop, crop));
+    });
+    [...new Set(procurementCentres.map(c => c.state).filter(Boolean))].sort().forEach(function (state) {
+        stateSelect.appendChild(new Option(state, state));
+    });
+    cropSelect.addEventListener("change", renderCentreMap);
+    stateSelect.addEventListener("change", renderCentreMap);
+}
+
+function renderCentreMap() {
+    const crop = document.getElementById("mapCrop").value;
+    const state = document.getElementById("mapState").value;
+    const filtered = procurementCentres.filter(function (centre) {
+        return (crop === "all" || normalizeText(centre.crop) === normalizeText(crop)) &&
+            (state === "all" || centre.state === state);
+    }).map(function (centre) {
+        const score = centreLoadScore(centre);
+        return Object.assign({}, centre, { loadScore: score, loadState: centreLoadState(score, centre) });
+    });
+
+    procurementMap.eachLayer(function (layer) { if (layer instanceof L.CircleMarker) procurementMap.removeLayer(layer); });
+    filtered.forEach(function (centre) {
+        const color = centre.loadState === "busy" ? "#e76f51" : centre.loadState === "active" ? "#e9b949" : "#2a9d8f";
+        L.circleMarker([Number(centre.latitude), Number(centre.longitude)], { radius: centre.loadState === "busy" ? 10 : 7, color: "#fff", weight: 2, fillColor: color, fillOpacity: .9 })
+            .bindPopup(mapPopup(centre)).addTo(procurementMap);
+    });
+
+    document.getElementById("mapCentreCount").textContent = filtered.length;
+    document.getElementById("mapBusyCount").textContent = filtered.filter(c => c.loadState === "busy").length;
+    document.getElementById("mapActiveCount").textContent = filtered.filter(c => c.loadState === "active").length;
+    document.getElementById("predictionList").innerHTML = filtered.sort((a, b) => b.loadScore - a.loadScore).slice(0, 5).map(predictionCard).join("") || "<p class=\"loading-copy\">No centres match these filters.</p>";
+}
+
+function mapPopup(centre) {
+    return `<div class="map-popup"><strong>${centre.centre_name || "Procurement Centre"}</strong><span>${centre.district || ""}, ${centre.state || ""}</span><b class="popup-${centre.loadState}">${centre.loadState.toUpperCase()} · ${centre.loadScore}% load</b><p>${centre.crop || "All crops"} · ${centre.available_slots || 0} slots open</p><p>${centre.available_capacity_quintals || 0} quintals available · Rs ${centre.indicative_price_inr_per_quintal || "-"}/quintal</p><small>${centre.location || "Location unavailable"}</small></div>`;
+}
+
+function predictionCard(centre) {
+    return `<button class="prediction-card" type="button" onclick="focusCentre(${Number(centre.latitude)}, ${Number(centre.longitude)})"><span class="prediction-dot ${centre.loadState}"></span><span><strong>${centre.centre_name || "Procurement Centre"}</strong><small>${centre.district || centre.state || "India"} · ${centre.crop || "Mixed crops"}</small></span><b>${centre.loadScore}%</b></button>`;
+}
+
+function focusCentre(latitude, longitude) {
+    procurementMap.setView([latitude, longitude], 8, { animate: true });
+}
 
 function initializeFarmerPage() {
 

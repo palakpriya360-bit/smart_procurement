@@ -8,6 +8,8 @@
     <title>ProcureSmart</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 
 <body>
@@ -27,6 +29,7 @@
         </div>
 
     </nav>
+  
 
 
     <!-- Hero Section -->
@@ -66,6 +69,37 @@
 
         </div>
 
+    </section>
+
+    <section class="features map-section">
+        <div class="map-shell">
+            <div class="map-heading">
+                <div>
+                    <p class="eyebrow">NATIONAL OPERATIONS VIEW</p>
+                    <h2>India procurement pulse</h2>
+                    <p class="map-subtitle">Live centre availability with a demand-based congestion forecast.</p>
+                </div>
+                <div class="map-controls">
+                    <label for="mapCrop">Crop</label>
+                    <select id="mapCrop"><option value="all">All crops</option></select>
+                    <label for="mapState">State</label>
+                    <select id="mapState"><option value="all">All states</option></select>
+                </div>
+            </div>
+            <div class="map-summary" id="mapSummary">
+                <div><strong id="mapCentreCount">--</strong><span>centres mapped</span></div>
+                <div><strong id="mapBusyCount">--</strong><span>predicted busy</span></div>
+                <div><strong id="mapActiveCount">--</strong><span>active now</span></div>
+                <div class="map-legend"><span class="legend-dot busy"></span> Busy <span class="legend-dot active"></span> Active <span class="legend-dot quiet"></span> Low load</div>
+            </div>
+            <div class="map-layout">
+                <div id="indiaMap" class="india-map" aria-label="Map of Indian procurement centres"></div>
+                <aside class="prediction-panel">
+                    <div class="panel-title-row"><div><p class="eyebrow">PREDICTION QUEUE</p><h3>Watch these centres</h3></div><span class="live-badge"><span></span> LIVE</span></div>
+                    <div id="predictionList" class="prediction-list"><p class="loading-copy">Loading centre intelligence...</p></div>
+                </aside>
+            </div>
+        </div>
     </section>
 
 
@@ -174,6 +208,10 @@
         </p>
 
     </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
 
 </body>
 
