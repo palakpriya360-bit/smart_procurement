@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Should I Go Now? - ProcureSmart</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        .assistant-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .assistant-card {
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-top: 25px;
+        }
+
+        .big-question {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .go-button {
+            width: 100%;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .decision-card {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .decision-card.go {
+            background: #e8f5e9;
+            border: 2px solid #2e7d32;
+        }
+
+        .decision-card.wait {
+            background: #fff8e1;
+            border: 2px solid #f9a825;
+        }
+
+        .decision-card.avoid {
+            background: #ffebee;
+            border: 2px solid #d32f2f;
+        }
+
+        .decision-title {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+        }
+
+        .stat-number {
+            font-size: 25px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .advice-box {
+            margin-top: 25px;
+            padding: 18px;
+            background: #f5f8f3;
+            border-radius: 12px;
+            line-height: 1.6;
+        }
+
+        .booking-info {
+            background: #f5f8f3;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .no-booking {
+            background: #fff3f3;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #d32f2f;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌾 ProcureSmart
+    </div>
+
+    <div class="nav-links">
+
+        <a href="index.html">Home</a>
+        <a href="farmer.html">Farmer</a>
+        <a href="tracking.html">Tracking</a>
+
+    </div>
+
+</nav>
+
+
+
+<section class="features">
+
+    <div class="assistant-container">
+
+        <h1>
+            🚜 Smart Travel Assistant
+        </h1>
+
+        <p>
+            Get a smart recommendation on whether this is
+            a good time to travel to your procurement centre.
+        </p>
+
+
+        <div id="noBooking" class="no-booking" style="display:none;">
+
+            <h2>❌ No Active Booking Found</h2>
+
+            <br>
+
+            <p>
+                Book a procurement slot first so ProcureSmart
+                can give you personalised travel advice.
+            </p>
+
+            <br>
+
+            <a href="farmer.html" class="btn">
+                📅 Book a Slot
+            </a>
+
+        </div>
+
+
+        <div id="assistantContent">
+
+
+            <div class="assistant-card">
+
+                <div class="big-question">
+                    🚜 Should I Go to the Centre Now?
+                </div>
+
+                <p class="question-text">
+                    ProcureSmart analyses your estimated queue
+                    and booking details to help you decide.
+                </p>
+
+
+                <div id="bookingInfo" class="booking-info"></div>
+
+
+                <button
+                    class="btn go-button"
+                    onclick="analyseJourney()"
+                >
+                    🤖 Check the Best Time to Leave
+                </button>
+
+
+                <div
+                    id="decisionCard"
+                    class="decision-card"
+                >
+
+                    <div
+                        id="decisionTitle"
+                        class="decision-title"
+                    ></div>
+
+                    <p id="decisionMessage"></p>
+
+
+                    <div class="stats-grid">
+
+                        <div class="stat-box">
+
+                            👨‍🌾
+
+                            <div>
+                                Estimated Queue
+                            </div>
+
+                            <div
+                                class="stat-number"
+                                id="queueNumber"
+                            >
+                                --
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-box">
+
+                            ⏱️
+
+                            <div>
+                                Estimated Wait
+                            </div>
+
+                            <div
+                                class="stat-number"
+                                id="waitNumber"
+                            >
+                                --
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-box">
+
+                            🕐
+
+                            <div>
+                                Suggested Time
+                            </div>
+
+                            <div
+                                class="stat-number"
+                                id="suggestedTime"
+                            >
+                                --
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="adviceBox"
+                        class="advice-box"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<script>
+
+
+const booking =
+    JSON.parse(
+        localStorage.getItem("booking")
+    );
+
+
+if (!booking) {
+
+    document.getElementById(
+        "assistantContent"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "noBooking"
+    ).style.display = "block";
+
+}
+
+
+else {
+
+    document.getElementById(
+        "bookingInfo"
+    ).innerHTML =
+
+        "<strong>🌾 Your Booking</strong><br><br>" +
+
+        "🏢 Centre: " +
+        (
+            booking.centre ||
+            booking.centreName ||
+            "Not available"
+        ) +
+
+        "<br>" +
+
+        "🎟️ Token: #" +
+        (
+            booking.token ||
+            "--"
+        ) +
+
+        "<br>" +
+
+        "📅 Date: " +
+        (
+            booking.date ||
+            "--"
+        ) +
+
+        "<br>" +
+
+        "🕐 Slot: " +
+        (
+            booking.slot ||
+            "--"
+        );
+
+}
+
+
+
+function analyseJourney() {
+
+
+    const queue =
+
+        Math.floor(
+            Math.random() * 45
+        ) + 3;
+
+
+    const wait =
+
+        queue * 4;
+
+
+    const card =
+
+        document.getElementById(
+            "decisionCard"
+        );
+
+
+    const title =
+
+        document.getElementById(
+            "decisionTitle"
+        );
+
+
+    const message =
+
+        document.getElementById(
+            "decisionMessage"
+        );
+
+
+    card.className =
+        "decision-card";
+
+
+    document.getElementById(
+        "queueNumber"
+    ).innerText =
+        queue + " farmers";
+
+
+    document.getElementById(
+        "waitNumber"
+    ).innerText =
+        wait + " min";
+
+
+    if (queue <= 15) {
+
+        card.classList.add("go");
+
+
+        title.innerText =
+            "🟢 YES — This is a Good Time!";
+
+
+        message.innerText =
+            "The centre is currently experiencing low congestion. You can travel now with a relatively short expected waiting time.";
+
+
+        document.getElementById(
+            "suggestedTime"
+        ).innerText =
+            "Leave Now";
+
+
+        document.getElementById(
+            "adviceBox"
+        ).innerHTML =
+            "💡 <strong>Smart Advice:</strong> Current congestion is low. Leaving now is likely to minimise your waiting time.";
+
+    }
+
+
+    else if (queue <= 30) {
+
+        card.classList.add("wait");
+
+
+        title.innerText =
+            "🟡 You Can Go, But Expect a Wait";
+
+
+        message.innerText =
+            "The centre currently has moderate congestion. You may choose to travel now or wait for the queue to reduce.";
+
+
+        document.getElementById(
+            "suggestedTime"
+        ).innerText =
+            "30–45 min later";
+
+
+        document.getElementById(
+            "adviceBox"
+        ).innerHTML =
+            "💡 <strong>Smart Advice:</strong> Waiting approximately 30–45 minutes could reduce congestion and improve your experience.";
+
+    }
+
+
+    else {
+
+        card.classList.add("avoid");
+
+
+        title.innerText =
+            "🔴 WAIT — High Congestion Detected";
+
+
+        message.innerText =
+            "The procurement centre is currently experiencing heavy congestion. Travelling later may save you significant waiting time.";
+
+
+        document.getElementById(
+            "suggestedTime"
+        ).innerText =
+            "1–2 hours later";
+
+
+        document.getElementById(
+            "adviceBox"
+        ).innerHTML =
+            "💡 <strong>Smart Advice:</strong> The queue is currently high. ProcureSmart recommends delaying your journey and checking again later.";
+
+    }
+
+
+    card.style.display =
+        "block";
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
