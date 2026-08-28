@@ -17,7 +17,6 @@ let userLatitude = null;
 let userLongitude = null;
 
 
-
 // ============================================================
 // PAGE LOAD
 // ============================================================
@@ -39,7 +38,6 @@ document.addEventListener(
 
     }
 );
-
 
 
 // ============================================================
@@ -78,106 +76,129 @@ function initializeFarmerPage() {
     // GPS
     // --------------------------------------------------------
 
-    gpsButton.addEventListener(
-        "click",
-        detectGPS
-    );
+    if (gpsButton) {
+
+        gpsButton.addEventListener(
+            "click",
+            detectGPS
+        );
+
+    }
 
 
     // --------------------------------------------------------
     // Crop changes
     // --------------------------------------------------------
 
-    produce.addEventListener(
-        "change",
-        updateRecommendations
-    );
+    if (produce) {
+
+        produce.addEventListener(
+            "change",
+            updateRecommendations
+        );
+
+    }
 
 
     // --------------------------------------------------------
     // Quantity changes
     // --------------------------------------------------------
 
-    quantity.addEventListener(
-        "input",
-        updateRecommendations
-    );
+    if (quantity) {
+
+        quantity.addEventListener(
+            "input",
+            updateRecommendations
+        );
+
+    }
 
 
     // --------------------------------------------------------
     // Date changes
     // --------------------------------------------------------
 
-    date.addEventListener(
-        "change",
-        function () {
+    if (date) {
 
-            updateRecommendations();
+        date.addEventListener(
+            "change",
+            function () {
 
-            if (selectedCentre) {
+                updateRecommendations();
 
-                loadAvailableSlots(
-                    selectedCentre
-                );
+                if (selectedCentre) {
+
+                    loadAvailableSlots(
+                        selectedCentre
+                    );
+
+                }
 
             }
+        );
 
-        }
-    );
+    }
 
 
     // --------------------------------------------------------
     // Centre manually changed
     // --------------------------------------------------------
 
-    centre.addEventListener(
-        "change",
-        function () {
+    if (centre) {
 
-            const centreId =
-                centre.value;
+        centre.addEventListener(
+            "change",
+            function () {
 
-            selectedCentre =
-                procurementCentres.find(
-                    function (item) {
+                const centreId =
+                    centre.value;
 
-                        return String(
-                            item.centre_id
-                        ) === String(
-                            centreId
-                        );
+                selectedCentre =
+                    procurementCentres.find(
+                        function (item) {
 
-                    }
-                );
+                            return String(
+                                item.centre_id
+                            ) === String(
+                                centreId
+                            );
+
+                        }
+                    );
 
 
-            if (selectedCentre) {
+                if (selectedCentre) {
 
-                showCentreInformation(
-                    selectedCentre
-                );
+                    showCentreInformation(
+                        selectedCentre
+                    );
 
-                loadAvailableSlots(
-                    selectedCentre
-                );
+                    loadAvailableSlots(
+                        selectedCentre
+                    );
+
+                }
 
             }
+        );
 
-        }
-    );
+    }
 
 
     // --------------------------------------------------------
     // Submit
     // --------------------------------------------------------
 
-    bookingForm.addEventListener(
-        "submit",
-        bookSlot
-    );
+    if (bookingForm) {
+
+        bookingForm.addEventListener(
+            "submit",
+            bookSlot
+        );
+
+    }
 
 }
-
 
 
 // ============================================================
@@ -194,7 +215,6 @@ function normalizeText(value) {
 }
 
 
-
 // ============================================================
 // LOAD EXCEL DATABASE
 // ============================================================
@@ -209,8 +229,12 @@ async function loadProcurementData() {
 
     try {
 
-        status.textContent =
-            "🔄 Loading procurement centre database...";
+        if (status) {
+
+            status.textContent =
+                "🔄 Loading procurement centre database...";
+
+        }
 
 
         const response =
@@ -317,23 +341,26 @@ async function loadProcurementData() {
         }
 
 
-        status.textContent =
-            "✅ Database loaded successfully: " +
-            procurementCentres.length +
-            " centres";
+        if (status) {
+
+            status.textContent =
+                "✅ Database loaded successfully: " +
+                procurementCentres.length +
+                " centres";
+
+        }
 
 
         setupDate();
 
 
         // ----------------------------------------------------
-        // If GPS already detected, recommend
+        // Refresh recommendations after database is loaded
         // ----------------------------------------------------
 
         updateRecommendations();
 
     }
-
     catch (error) {
 
         console.error(
@@ -342,8 +369,12 @@ async function loadProcurementData() {
         );
 
 
-        status.textContent =
-            "❌ Could not load procurement database.";
+        if (status) {
+
+            status.textContent =
+                "❌ Could not load procurement database.";
+
+        }
 
 
         alert(
@@ -355,7 +386,6 @@ async function loadProcurementData() {
     }
 
 }
-
 
 
 // ============================================================
@@ -389,69 +419,10 @@ function setupDate() {
         todayString;
 
 
-    // --------------------------------------------------------
-    // Find first date available in Excel
-    // --------------------------------------------------------
+    // Keep the current valid selection if there is one.
+    // Otherwise use today's date.
 
-    let firstDatabaseDate = null;
-
-
-    for (
-        let i = 0;
-        i < procurementCentres.length;
-        i++
-    ) {
-
-        const parsed =
-            parseExcelDate(
-                procurementCentres[i].slot_date
-            );
-
-
-        if (parsed) {
-
-            firstDatabaseDate =
-                parsed;
-
-            break;
-
-        }
-
-    }
-
-
-    // --------------------------------------------------------
-    // Use database date if valid
-    // --------------------------------------------------------
-
-    if (firstDatabaseDate) {
-
-        const databaseDateString =
-            formatDateForInput(
-                firstDatabaseDate
-            );
-
-
-        if (
-            databaseDateString >=
-            todayString
-        ) {
-
-            dateInput.value =
-                databaseDateString;
-
-        }
-
-        else {
-
-            dateInput.value =
-                todayString;
-
-        }
-
-    }
-
-    else {
+    if (!dateInput.value) {
 
         dateInput.value =
             todayString;
@@ -461,12 +432,16 @@ function setupDate() {
 }
 
 
-
 // ============================================================
-// FORMAT DATE FOR HTML INPUT
+// FORMAT DATE FOR INPUT
 // ============================================================
 
 function formatDateForInput(date) {
+
+    if (!(date instanceof Date)) {
+        return "";
+    }
+
 
     const year =
         date.getFullYear();
@@ -501,7 +476,6 @@ function formatDateForInput(date) {
 }
 
 
-
 // ============================================================
 // PARSE EXCEL DATE
 // ============================================================
@@ -519,13 +493,9 @@ function parseExcelDate(value) {
     }
 
 
-    // --------------------------------------------------------
-    // JavaScript Date
-    // --------------------------------------------------------
-
     if (
         value instanceof Date &&
-        !isNaN(value.getTime())
+        !isNaN(value)
     ) {
 
         return new Date(
@@ -537,98 +507,83 @@ function parseExcelDate(value) {
     }
 
 
-    // --------------------------------------------------------
     // Excel serial number
-    // --------------------------------------------------------
 
     if (
-        typeof value === "number" &&
-        isFinite(value)
+        typeof value === "number"
     ) {
 
-        const excelEpoch =
-            new Date(
-                1899,
-                11,
-                30
+        const parsed =
+            XLSX.SSF.parse_date_code(
+                value
             );
 
 
-        const date =
-            new Date(
-                excelEpoch.getTime() +
-                value * 86400000
+        if (parsed) {
+
+            return new Date(
+                parsed.y,
+                parsed.m - 1,
+                parsed.d
             );
 
-
-        return new Date(
-            date.getFullYear(),
-            date.getMonth(),
-            date.getDate()
-        );
+        }
 
     }
 
-
-    // --------------------------------------------------------
-    // String
-    // --------------------------------------------------------
 
     const text =
-        String(value)
-            .trim();
-
-
-    // DD-MM-YYYY
-    let match =
-        text.match(
-            /^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/
-        );
-
-
-    if (match) {
-
-        return new Date(
-            Number(match[3]),
-            Number(match[2]) - 1,
-            Number(match[1])
-        );
-
-    }
+        String(value).trim();
 
 
     // YYYY-MM-DD
-    match =
+
+    const isoMatch =
         text.match(
-            /^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/
+            /^(\d{4})-(\d{1,2})-(\d{1,2})$/
         );
 
 
-    if (match) {
+    if (isoMatch) {
 
         return new Date(
-            Number(match[1]),
-            Number(match[2]) - 1,
-            Number(match[3])
+            Number(isoMatch[1]),
+            Number(isoMatch[2]) - 1,
+            Number(isoMatch[3])
         );
 
     }
 
 
-    const parsed =
+    // DD-MM-YYYY or DD/MM/YYYY
+
+    const dmyMatch =
+        text.match(
+            /^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/
+        );
+
+
+    if (dmyMatch) {
+
+        return new Date(
+            Number(dmyMatch[3]),
+            Number(dmyMatch[2]) - 1,
+            Number(dmyMatch[1])
+        );
+
+    }
+
+
+    const parsedDate =
         new Date(text);
 
 
-    if (
-        !isNaN(
-            parsed.getTime()
-        )
-    ) {
+    if (!isNaN(parsedDate)) {
 
         return new Date(
-            parsed.getFullYear(),
-            parsed.getMonth(),
-            parsed.getDate()
+            parsedDate.getFullYear(),
+            parsedDate.getMonth(),
+            parsedDate.getDate()
         );
 
     }
@@ -637,324 +592,6 @@ function parseExcelDate(value) {
     return null;
 
 }
-
-
-
-// ============================================================
-// GPS DETECTION
-// ============================================================
-
-function detectGPS() {
-
-    const gpsStatus =
-        document.getElementById(
-            "gpsStatus"
-        );
-
-
-    const gpsButton =
-        document.getElementById(
-            "gpsButton"
-        );
-
-
-    if (
-        !navigator.geolocation
-    ) {
-
-        gpsStatus.innerHTML =
-            "❌ GPS is not supported by this browser.";
-
-        return;
-
-    }
-
-
-    gpsButton.disabled =
-        true;
-
-
-    gpsButton.innerText =
-        "📍 Detecting location...";
-
-
-    gpsStatus.innerHTML =
-        "🔄 Getting your GPS location...";
-
-
-    navigator.geolocation.getCurrentPosition(
-
-        function (position) {
-
-            userLatitude =
-                position.coords.latitude;
-
-
-            userLongitude =
-                position.coords.longitude;
-
-
-            console.log(
-                "User Latitude:",
-                userLatitude
-            );
-
-
-            console.log(
-                "User Longitude:",
-                userLongitude
-            );
-
-
-            gpsStatus.innerHTML =
-
-                "✅ GPS location detected successfully." +
-
-                "<br><br>" +
-
-                "Latitude: <strong>" +
-                userLatitude.toFixed(6) +
-                "</strong>" +
-
-                "<br>" +
-
-                "Longitude: <strong>" +
-                userLongitude.toFixed(6) +
-                "</strong>";
-
-
-            gpsButton.disabled =
-                false;
-
-
-            gpsButton.innerText =
-                "📍 Detect My Location Again";
-
-
-            // ------------------------------------------------
-            // Now find centre
-            // ------------------------------------------------
-
-            updateRecommendations();
-
-        },
-
-
-        function (error) {
-
-            console.error(
-                "GPS Error:",
-                error
-            );
-
-
-            gpsButton.disabled =
-                false;
-
-
-            gpsButton.innerText =
-                "📍 Detect My Location Again";
-
-
-            if (
-                error.code ===
-                error.PERMISSION_DENIED
-            ) {
-
-                gpsStatus.innerHTML =
-                    "❌ Location permission denied. Please allow location access.";
-
-            }
-
-            else if (
-                error.code ===
-                error.POSITION_UNAVAILABLE
-            ) {
-
-                gpsStatus.innerHTML =
-                    "❌ GPS location is unavailable.";
-
-            }
-
-            else if (
-                error.code ===
-                error.TIMEOUT
-            ) {
-
-                gpsStatus.innerHTML =
-                    "❌ GPS request timed out. Try again.";
-
-            }
-
-            else {
-
-                gpsStatus.innerHTML =
-                    "❌ Unable to detect your location.";
-
-            }
-
-        },
-
-
-        {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0
-        }
-
-    );
-
-}
-
-
-
-// ============================================================
-// CROP MATCHING
-// ============================================================
-
-function cropsMatch(
-    farmerCrop,
-    centreCrop
-) {
-
-    farmerCrop =
-        normalizeText(
-            farmerCrop
-        );
-
-
-    centreCrop =
-        normalizeText(
-            centreCrop
-        );
-
-
-    if (
-        !farmerCrop ||
-        !centreCrop
-    ) {
-
-        return false;
-
-    }
-
-
-    // Rice / Paddy
-
-    if (
-        farmerCrop === "rice" ||
-        farmerCrop === "paddy"
-    ) {
-
-        return (
-            centreCrop === "rice" ||
-            centreCrop === "paddy"
-        );
-
-    }
-
-
-    // Maize / Corn
-
-    if (
-        farmerCrop === "maize" ||
-        farmerCrop === "corn"
-    ) {
-
-        return (
-            centreCrop === "maize" ||
-            centreCrop === "corn"
-        );
-
-    }
-
-
-    // General exact match
-
-    return (
-        farmerCrop ===
-        centreCrop
-    );
-
-}
-
-
-
-// ============================================================
-// HAVERSINE DISTANCE
-// ============================================================
-
-function calculateDistance(
-    lat1,
-    lon1,
-    lat2,
-    lon2
-) {
-
-    const R =
-        6371;
-
-
-    const dLat =
-        degreesToRadians(
-            lat2 - lat1
-        );
-
-
-    const dLon =
-        degreesToRadians(
-            lon2 - lon1
-        );
-
-
-    const a =
-        Math.sin(dLat / 2) *
-        Math.sin(dLat / 2) +
-
-        Math.cos(
-            degreesToRadians(lat1)
-        ) *
-
-        Math.cos(
-            degreesToRadians(lat2)
-        ) *
-
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-
-
-    const c =
-        2 *
-        Math.atan2(
-            Math.sqrt(a),
-            Math.sqrt(1 - a)
-        );
-
-
-    return R * c;
-
-}
-
-
-
-// ============================================================
-// DEGREES TO RADIANS
-// ============================================================
-
-function degreesToRadians(
-    degrees
-) {
-
-    return (
-        degrees *
-        Math.PI /
-        180
-    );
-
-}
-
-
-
 // ============================================================
 // GET SELECTED DATE
 // ============================================================
@@ -967,24 +604,42 @@ function getSelectedDate() {
         );
 
 
-    if (!dateInput) {
+    if (
+        !dateInput ||
+        !dateInput.value
+    ) {
+
         return null;
+
     }
 
 
-    if (!dateInput.value) {
+    const parts =
+        dateInput.value.split(
+            "-"
+        );
+
+
+    if (
+        parts.length !== 3
+    ) {
+
         return null;
+
     }
 
 
-    return dateInput.value;
+    return new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
+    );
 
 }
 
 
-
 // ============================================================
-// CHECK CENTRE DATE
+// CENTRE DATE MATCH
 // ============================================================
 
 function centreDateMatches(
@@ -992,7 +647,9 @@ function centreDateMatches(
     selectedDate
 ) {
 
-    if (!selectedDate) {
+    if (
+        !selectedDate
+    ) {
 
         return true;
 
@@ -1013,14 +670,228 @@ function centreDateMatches(
 
 
     return (
-        formatDateForInput(
-            centreDate
-        ) ===
-        selectedDate
+        centreDate.getFullYear() ===
+            selectedDate.getFullYear() &&
+
+        centreDate.getMonth() ===
+            selectedDate.getMonth() &&
+
+        centreDate.getDate() ===
+            selectedDate.getDate()
     );
 
 }
 
+
+// ============================================================
+// CROP MATCHING
+// ============================================================
+
+function cropsMatch(
+    selectedCrop,
+    centreCrop
+) {
+
+    const selected =
+        normalizeText(
+            selectedCrop
+        );
+
+
+    const available =
+        normalizeText(
+            centreCrop
+        );
+
+
+    if (
+        !selected ||
+        !available
+    ) {
+
+        return false;
+
+    }
+
+
+    // Exact match
+
+    if (
+        selected === available
+    ) {
+
+        return true;
+
+    }
+
+
+    // Handle multiple crops in one Excel cell
+
+    const crops =
+        available
+            .split(
+                /[,;/|]+/
+            )
+            .map(
+                function (crop) {
+
+                    return normalizeText(
+                        crop
+                    );
+
+                }
+            )
+            .filter(
+                function (crop) {
+
+                    return crop !== "";
+
+                }
+            );
+
+
+    if (
+        crops.includes(
+            selected
+        )
+    ) {
+
+        return true;
+
+    }
+
+
+    // Common crop aliases
+
+    const aliases = {
+
+        "rice": [
+            "paddy",
+            "rice"
+        ],
+
+        "paddy": [
+            "rice",
+            "paddy"
+        ],
+
+        "maize": [
+            "corn",
+            "maize"
+        ],
+
+        "corn": [
+            "maize",
+            "corn"
+        ],
+
+        "pulses": [
+            "pulse",
+            "pulses",
+            "dal"
+        ]
+
+    };
+
+
+    if (aliases[selected]) {
+
+        return aliases[selected]
+            .some(
+                function (alias) {
+
+                    return (
+                        available === alias ||
+                        crops.includes(alias)
+                    );
+
+                }
+            );
+
+    }
+
+
+    return false;
+
+}
+
+
+// ============================================================
+// CALCULATE DISTANCE
+// HAVERSINE FORMULA
+// ============================================================
+
+function calculateDistance(
+    lat1,
+    lon1,
+    lat2,
+    lon2
+) {
+
+    const radius =
+        6371;
+
+
+    const toRadians =
+        function (value) {
+
+            return (
+                value *
+                Math.PI
+            ) / 180;
+
+        };
+
+
+    const deltaLat =
+        toRadians(
+            lat2 - lat1
+        );
+
+
+    const deltaLon =
+        toRadians(
+            lon2 - lon1
+        );
+
+
+    const a =
+        Math.sin(
+            deltaLat / 2
+        ) *
+        Math.sin(
+            deltaLat / 2
+        ) +
+
+        Math.cos(
+            toRadians(lat1)
+        ) *
+
+        Math.cos(
+            toRadians(lat2)
+        ) *
+
+        Math.sin(
+            deltaLon / 2
+        ) *
+        Math.sin(
+            deltaLon / 2
+        );
+
+
+    const c =
+        2 *
+        Math.atan2(
+            Math.sqrt(a),
+            Math.sqrt(1 - a)
+        );
+
+
+    return (
+        radius * c
+    );
+
+}
 
 
 // ============================================================
@@ -1029,26 +900,35 @@ function centreDateMatches(
 
 function getSuitableCentres() {
 
-    const produce =
+    const produceElement =
         document.getElementById(
             "produce"
-        ).value;
+        );
+
+
+    const quantityElement =
+        document.getElementById(
+            "quantity"
+        );
+
+
+    const produce =
+        produceElement ?
+        produceElement.value :
+        "";
 
 
     const quantity =
         Number(
-            document.getElementById(
-                "quantity"
-            ).value
-        );
-
-
-    const selectedDate =
-        getSelectedDate();
+            quantityElement ?
+            quantityElement.value :
+            0
+        ) || 0;
 
 
     if (
-        !produce
+        !produce ||
+        procurementCentres.length === 0
     ) {
 
         return [];
@@ -1056,56 +936,27 @@ function getSuitableCentres() {
     }
 
 
-    const results =
+    // --------------------------------------------------------
+    // First find centres matching the crop and basic
+    // availability requirements.
+    //
+    // IMPORTANT:
+    // The date is NOT used here as a hard rejection.
+    // This prevents the old Excel demo date from causing
+    // "No suitable centre found".
+    // --------------------------------------------------------
+
+    let suitableCentres =
         procurementCentres.filter(
             function (centre) {
 
-                // --------------------------------------------
-                // Crop
-                // --------------------------------------------
-
-                const cropOK =
-                    cropsMatch(
-                        produce,
-                        centre.crop
-                    );
-
-
-                if (!cropOK) {
-                    return false;
-                }
-
-
-                // --------------------------------------------
-                // Date
-                // --------------------------------------------
-
-                const dateOK =
-                    centreDateMatches(
-                        centre,
-                        selectedDate
-                    );
-
-
-                if (!dateOK) {
-                    return false;
-                }
-
-
-                // --------------------------------------------
-                // Capacity
-                // --------------------------------------------
-
-                const availableCapacity =
-                    Number(
-                        centre.available_capacity_quintals
-                    ) || 0;
-
+                // Crop must match
 
                 if (
-                    quantity > 0 &&
-                    availableCapacity <
-                    quantity
+                    !cropsMatch(
+                        produce,
+                        centre.crop
+                    )
                 ) {
 
                     return false;
@@ -1113,9 +964,25 @@ function getSuitableCentres() {
                 }
 
 
-                // --------------------------------------------
-                // Available slots
-                // --------------------------------------------
+                // Centre must have sufficient capacity
+
+                const capacity =
+                    Number(
+                        centre.available_capacity_quintals
+                    ) || 0;
+
+
+                if (
+                    quantity > 0 &&
+                    capacity < quantity
+                ) {
+
+                    return false;
+
+                }
+
+
+                // Centre must have available booking slots
 
                 const availableSlots =
                     Number(
@@ -1132,25 +999,28 @@ function getSuitableCentres() {
                 }
 
 
-                // --------------------------------------------
-                // GPS coordinates
-                // --------------------------------------------
+                // Centre must have valid coordinates
 
-                const centreLat =
+                const latitude =
                     Number(
                         centre.latitude
                     );
 
 
-                const centreLon =
+                const longitude =
                     Number(
                         centre.longitude
                     );
 
 
                 if (
-                    !isFinite(centreLat) ||
-                    !isFinite(centreLon)
+                    !Number.isFinite(
+                        latitude
+                    ) ||
+
+                    !Number.isFinite(
+                        longitude
+                    )
                 ) {
 
                     return false;
@@ -1164,220 +1034,138 @@ function getSuitableCentres() {
         );
 
 
-    return results;
-
-}
-
-
-
-// ============================================================
-// SMART SCORE
-// ============================================================
-
-function calculateSmartScore(
-    centre
-) {
-
-    let score = 0;
-
-
     // --------------------------------------------------------
-    // DISTANCE SCORE
+    // Prefer centres whose date matches the selected date.
+    //
+    // If the database has no matching date, KEEP the suitable
+    // centres instead of returning an empty list.
     // --------------------------------------------------------
 
-    const distance =
-        centre.distance;
+    const selectedDate =
+        getSelectedDate();
 
 
     if (
-        distance <= 5
+        selectedDate &&
+        suitableCentres.length > 0
     ) {
 
-        score += 40;
+        const exactDateCentres =
+            suitableCentres.filter(
+                function (centre) {
 
-    }
+                    return centreDateMatches(
+                        centre,
+                        selectedDate
+                    );
 
-    else if (
-        distance <= 10
-    ) {
+                }
+            );
 
-        score += 35;
 
-    }
+        if (
+            exactDateCentres.length > 0
+        ) {
 
-    else if (
-        distance <= 20
-    ) {
+            suitableCentres =
+                exactDateCentres;
 
-        score += 28;
-
-    }
-
-    else if (
-        distance <= 40
-    ) {
-
-        score += 20;
-
-    }
-
-    else {
-
-        score += 10;
+        }
 
     }
 
 
     // --------------------------------------------------------
-    // CAPACITY SCORE
+    // Calculate distance when user GPS is available
     // --------------------------------------------------------
 
-    const availableCapacity =
-        Number(
-            centre.available_capacity_quintals
-        ) || 0;
+    suitableCentres =
+        suitableCentres.map(
+            function (centre) {
+
+                const copy =
+                    Object.assign(
+                        {},
+                        centre
+                    );
 
 
-    const totalCapacity =
-        Number(
-            centre.capacity_quintals
-        ) || 1;
+                if (
+                    userLatitude !== null &&
+                    userLongitude !== null
+                ) {
+
+                    copy.distance =
+                        calculateDistance(
+                            userLatitude,
+                            userLongitude,
+                            Number(
+                                centre.latitude
+                            ),
+                            Number(
+                                centre.longitude
+                            )
+                        );
+
+                }
+                else {
+
+                    copy.distance =
+                        Infinity;
+
+                }
 
 
-    const capacityPercentage =
-        (
-            availableCapacity /
-            totalCapacity
-        ) * 100;
+                return copy;
 
-
-    if (
-        capacityPercentage >= 70
-    ) {
-
-        score += 25;
-
-    }
-
-    else if (
-        capacityPercentage >= 50
-    ) {
-
-        score += 22;
-
-    }
-
-    else if (
-        capacityPercentage >= 30
-    ) {
-
-        score += 18;
-
-    }
-
-    else if (
-        capacityPercentage >= 15
-    ) {
-
-        score += 13;
-
-    }
-
-    else {
-
-        score += 8;
-
-    }
-
-
-    // --------------------------------------------------------
-    // SLOT SCORE
-    // --------------------------------------------------------
-
-    const availableSlots =
-        Number(
-            centre.available_slots
-        ) || 0;
-
-
-    const totalSlots =
-        Number(
-            centre.total_slots
-        ) || 1;
-
-
-    const slotPercentage =
-        (
-            availableSlots /
-            totalSlots
-        ) * 100;
-
-
-    if (
-        slotPercentage >= 70
-    ) {
-
-        score += 20;
-
-    }
-
-    else if (
-        slotPercentage >= 50
-    ) {
-
-        score += 17;
-
-    }
-
-    else if (
-        slotPercentage >= 30
-    ) {
-
-        score += 14;
-
-    }
-
-    else if (
-        slotPercentage >= 15
-    ) {
-
-        score += 10;
-
-    }
-
-    else {
-
-        score += 6;
-
-    }
-
-
-    // --------------------------------------------------------
-    // AVAILABILITY STATUS
-    // --------------------------------------------------------
-
-    const status =
-        normalizeText(
-            centre.availability_status
+            }
         );
 
 
-    if (
-        status === "available"
-    ) {
+    // --------------------------------------------------------
+    // Sort by distance and availability
+    // --------------------------------------------------------
 
-        score += 15;
+    suitableCentres.sort(
+        function (a, b) {
 
-    }
+            if (
+                a.distance !==
+                b.distance
+            ) {
+
+                return (
+                    a.distance -
+                    b.distance
+                );
+
+            }
 
 
-    return Math.min(
-        Math.round(score),
-        100
+            const aSlots =
+                Number(
+                    a.available_slots
+                ) || 0;
+
+
+            const bSlots =
+                Number(
+                    b.available_slots
+                ) || 0;
+
+
+            return (
+                bSlots -
+                aSlots
+            );
+
+        }
     );
 
-}
 
+    return suitableCentres;
+
+}
 
 
 // ============================================================
@@ -1392,15 +1180,72 @@ function updateRecommendations() {
         );
 
 
-    const recommendationBox =
+    if (!centreSelect) {
+        return;
+    }
+
+
+    // Do not show a false "No suitable centre found"
+    // while the Excel database is still loading.
+
+    if (
+        procurementCentres.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    const produce =
         document.getElementById(
-            "recommendationBox"
+            "produce"
         );
 
 
-    const recommendationText =
+    if (
+        !produce ||
+        !produce.value
+    ) {
+
+        centreSelect.innerHTML =
+            `
+            <option value="">
+                Select produce to find suitable centres
+            </option>
+            `;
+
+        selectedCentre = null;
+
+        clearCentreInformation();
+
+        clearAvailableSlots();
+
+        return;
+
+    }
+
+
+    const suitableCentres =
+        getSuitableCentres();
+
+
+    displaySuitableCentres(
+        suitableCentres
+    );
+
+}
+// ============================================================
+// DISPLAY SUITABLE CENTRES
+// ============================================================
+
+function displaySuitableCentres(
+    centres
+) {
+
+    const centreSelect =
         document.getElementById(
-            "recommendationText"
+            "centre"
         );
 
 
@@ -1409,231 +1254,66 @@ function updateRecommendations() {
     }
 
 
-    const produce =
-        document.getElementById(
-            "produce"
-        ).value;
-
-
-    // --------------------------------------------------------
-    // No crop
-    // --------------------------------------------------------
-
-    if (!produce) {
-
-        centreSelect.innerHTML =
-            `
-            <option value="">
-                Select produce first
-            </option>
-            `;
-
-
-        recommendationBox.style.display =
-            "none";
-
-
-        selectedCentre =
-            null;
-
-
-        clearSlots();
-
-
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // GPS required
-    // --------------------------------------------------------
-
-    if (
-        userLatitude === null ||
-        userLongitude === null
-    ) {
-
-        centreSelect.innerHTML =
-            `
-            <option value="">
-                📍 Detect GPS location first
-            </option>
-            `;
-
-
-        recommendationBox.style.display =
-            "block";
-
-
-        recommendationText.innerHTML =
-
-            "📍 Please click " +
-            "<strong>Detect My Location</strong> " +
-            "so ProcureSmart can find the nearest suitable centre.";
-
-
-        selectedCentre =
-            null;
-
-
-        clearSlots();
-
-
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // Find suitable centres
-    // --------------------------------------------------------
-
-    let suitableCentres =
-        getSuitableCentres();
-
-
-    // --------------------------------------------------------
-    // Calculate distance
-    // --------------------------------------------------------
-
-    suitableCentres =
-        suitableCentres.map(
-            function (centre) {
-
-                const distance =
-                    calculateDistance(
-
-                        userLatitude,
-                        userLongitude,
-
-                        Number(
-                            centre.latitude
-                        ),
-                        Number(
-                            centre.longitude
-                        )
-
-                    );
-
-
-                const smartScore =
-                    calculateSmartScore(
-                        {
-                            ...centre,
-                            distance:
-                                distance
-                        }
-                    );
-
-
-                return {
-
-                    ...centre,
-
-                    distance:
-                        distance,
-
-                    smartScore:
-                        smartScore
-
-                };
-
-            }
-        );
-
-
-    // --------------------------------------------------------
-    // Sort
-    // --------------------------------------------------------
-
-    suitableCentres.sort(
-        function (a, b) {
-
-            // Smart score first
-            if (
-                b.smartScore !==
-                a.smartScore
-            ) {
-
-                return (
-                    b.smartScore -
-                    a.smartScore
-                );
-
-            }
-
-
-            // If score same, nearest first
-            return (
-                a.distance -
-                b.distance
-            );
-
-        }
-    );
-
-
-    // --------------------------------------------------------
-    // No suitable centre
-    // --------------------------------------------------------
-
-    if (
-        suitableCentres.length ===
-        0
-    ) {
-
-        centreSelect.innerHTML =
-            `
-            <option value="">
-                ❌ No suitable centre found
-            </option>
-            `;
-
-
-        recommendationBox.style.display =
-            "block";
-
-
-        recommendationText.innerHTML =
-
-            "❌ No suitable procurement centre found." +
-
-            "<br><br>" +
-
-            "Possible reasons:" +
-
-            "<br>• Selected crop is not available" +
-
-            "<br>• Quantity exceeds available capacity" +
-
-            "<br>• No slots are available" +
-
-            "<br>• Selected date is not available in the database";
-
-
-        selectedCentre =
-            null;
-
-
-        clearSlots();
-
-
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // Fill dropdown
-    // --------------------------------------------------------
-
     centreSelect.innerHTML =
         "";
 
 
-    suitableCentres.forEach(
-        function (centre) {
+    // --------------------------------------------------------
+    // No centre found
+    // --------------------------------------------------------
+
+    if (
+        !centres ||
+        centres.length === 0
+    ) {
+
+        centreSelect.innerHTML =
+            `
+            <option value="">
+                No suitable centre found
+            </option>
+            `;
+
+        selectedCentre = null;
+
+        clearCentreInformation();
+
+        clearAvailableSlots();
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // Default option
+    // --------------------------------------------------------
+
+    const defaultOption =
+        document.createElement(
+            "option"
+        );
+
+
+    defaultOption.value =
+        "";
+
+
+    defaultOption.textContent =
+        "Select a procurement centre";
+
+
+    centreSelect.appendChild(
+        defaultOption
+    );
+
+
+    // --------------------------------------------------------
+    // Add recommended centres
+    // --------------------------------------------------------
+
+    centres.forEach(
+        function (centre, index) {
 
             const option =
                 document.createElement(
@@ -1645,24 +1325,61 @@ function updateRecommendations() {
                 centre.centre_id;
 
 
+            let centreName =
+                centre.centre_name ||
+                "Procurement Centre";
+
+
+            let location =
+                centre.location ||
+                centre.district ||
+                "";
+
+
+            let distanceText =
+                "";
+
+
+            if (
+                Number.isFinite(
+                    centre.distance
+                ) &&
+                centre.distance !== Infinity
+            ) {
+
+                distanceText =
+                    " — " +
+                    centre.distance.toFixed(1) +
+                    " km away";
+
+            }
+
+
+            // Mark the nearest recommendation
+
+            let recommendedText =
+                "";
+
+
+            if (
+                index === 0
+            ) {
+
+                recommendedText =
+                    "⭐ Recommended: ";
+
+            }
+
+
             option.textContent =
-
-                centre.centre_name +
-
-                " | " +
-
-                centre.distance.toFixed(2) +
-
-                " km | " +
-
-                "Slots: " +
-
-                centre.available_slots +
-
-                " | Score: " +
-
-                centre.smartScore +
-                "/100";
+                recommendedText +
+                centreName +
+                (
+                    location ?
+                    " (" + location + ")" :
+                    ""
+                ) +
+                distanceText;
 
 
             centreSelect.appendChild(
@@ -1674,40 +1391,35 @@ function updateRecommendations() {
 
 
     // --------------------------------------------------------
-    // Best centre
+    // Automatically select the best centre
     // --------------------------------------------------------
 
-    const bestCentre =
-        suitableCentres[0];
-
-
     selectedCentre =
-        bestCentre;
+        centres[0];
 
 
     centreSelect.value =
-        bestCentre.centre_id;
+        String(
+            selectedCentre.centre_id
+        );
 
-
-    // --------------------------------------------------------
-    // Show information
-    // --------------------------------------------------------
 
     showCentreInformation(
-        bestCentre
+        selectedCentre
     );
 
 
-    // --------------------------------------------------------
-    // Load exact Excel slots
-    // --------------------------------------------------------
-
     loadAvailableSlots(
-        bestCentre
+        selectedCentre
+    );
+
+
+    console.log(
+        "Recommended centre:",
+        selectedCentre
     );
 
 }
-
 
 
 // ============================================================
@@ -1718,119 +1430,159 @@ function showCentreInformation(
     centre
 ) {
 
-    const recommendationBox =
+    if (!centre) {
+        return;
+    }
+
+
+    const infoBox =
         document.getElementById(
-            "recommendationBox"
+            "centreInfo"
         );
 
 
-    const recommendationText =
-        document.getElementById(
-            "recommendationText"
-        );
+    if (!infoBox) {
+        return;
+    }
 
 
-    const availableCapacity =
+    const name =
+        centre.centre_name ||
+        "Not available";
+
+
+    const location =
+        centre.location ||
+        centre.district ||
+        "Not available";
+
+
+    const capacity =
         Number(
             centre.available_capacity_quintals
         ) || 0;
 
 
-    const availableSlots =
+    const slots =
         Number(
             centre.available_slots
         ) || 0;
 
 
-    const bookedSlots =
-        Number(
-            centre.booked_slots
-        ) || 0;
+    let distance =
+        "";
 
 
-    const price =
-        Number(
-            centre.indicative_price_inr_per_quintal
-        ) || 0;
+    if (
+        Number.isFinite(
+            centre.distance
+        ) &&
+        centre.distance !== Infinity
+    ) {
+
+        distance =
+            centre.distance.toFixed(2) +
+            " km";
+
+    }
+    else {
+
+        distance =
+            "Location distance unavailable";
+
+    }
 
 
-    recommendationBox.style.display =
-        "block";
+    infoBox.innerHTML =
+        `
+        <div class="centre-details">
 
+            <h3>
+                ⭐ Recommended Centre
+            </h3>
 
-    recommendationText.innerHTML =
+            <p>
+                <strong>🏢 Centre:</strong>
+                ${name}
+            </p>
 
-        "<strong>🥇 Recommended Procurement Centre</strong>" +
+            <p>
+                <strong>📍 Location:</strong>
+                ${location}
+            </p>
 
-        "<br><br>" +
+            <p>
+                <strong>📏 Distance:</strong>
+                ${distance}
+            </p>
 
-        "🏢 <strong>" +
-        centre.centre_name +
-        "</strong>" +
+            <p>
+                <strong>📦 Available Capacity:</strong>
+                ${capacity} quintals
+            </p>
 
-        "<br><br>" +
+            <p>
+                <strong>🕐 Available Slots:</strong>
+                ${slots}
+            </p>
 
-        "📍 Location: " +
-        centre.location +
-
-        "<br>" +
-
-        "🏛 District: " +
-        centre.district +
-
-        "<br>" +
-
-        "🌾 Crop: " +
-        centre.crop +
-
-        "<br>" +
-
-        "🗺 Distance: <strong>" +
-        centre.distance.toFixed(2) +
-        " km</strong>" +
-
-        "<br>" +
-
-        "📦 Available Capacity: <strong>" +
-        availableCapacity +
-        " quintals</strong>" +
-
-        "<br>" +
-
-        "🎟 Available Slots: <strong>" +
-        availableSlots +
-        "</strong>" +
-
-        "<br>" +
-
-        "👥 Booked Slots: " +
-        bookedSlots +
-
-        "<br>" +
-
-        "💰 Indicative Price: " +
-
-        (
-            price > 0
-            ? "₹" +
-              price +
-              " / quintal"
-            : "Not available"
-        ) +
-
-        "<br><br>" +
-
-        "⭐ <strong>Smart Score: " +
-        centre.smartScore +
-        "/100</strong>";
+        </div>
+        `;
 
 }
 
 
+// ============================================================
+// CLEAR CENTRE INFORMATION
+// ============================================================
+
+function clearCentreInformation() {
+
+    const infoBox =
+        document.getElementById(
+            "centreInfo"
+        );
+
+
+    if (infoBox) {
+
+        infoBox.innerHTML =
+            "";
+
+    }
+
+}
+
 
 // ============================================================
-// LOAD AVAILABLE SLOTS
-// IMPORTANT: USES available_slot_time FROM EXCEL
+// CLEAR AVAILABLE SLOTS
+// ============================================================
+
+function clearAvailableSlots() {
+
+    const slotSelect =
+        document.getElementById(
+            "slot"
+        );
+
+
+    if (!slotSelect) {
+        return;
+    }
+
+
+    slotSelect.innerHTML =
+        `
+        <option value="">
+            Select a centre first
+        </option>
+        `;
+
+}
+
+
+// ============================================================
+// LOAD AVAILABLE TIME SLOTS
 // ============================================================
 
 function loadAvailableSlots(
@@ -1852,22 +1604,9 @@ function loadAvailableSlots(
         "";
 
 
-    // --------------------------------------------------------
-    // Check selected date
-    // --------------------------------------------------------
+    if (!centre) {
 
-    const selectedDate =
-        getSelectedDate();
-
-
-    if (!selectedDate) {
-
-        slotSelect.innerHTML =
-            `
-            <option value="">
-                Select a date first
-            </option>
-            `;
+        clearAvailableSlots();
 
         return;
 
@@ -1875,30 +1614,7 @@ function loadAvailableSlots(
 
 
     // --------------------------------------------------------
-    // Check centre date
-    // --------------------------------------------------------
-
-    if (
-        !centreDateMatches(
-            centre,
-            selectedDate
-        )
-    ) {
-
-        slotSelect.innerHTML =
-            `
-            <option value="">
-                No slots for selected date
-            </option>
-            `;
-
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // Available slot count
+    // Check centre availability
     // --------------------------------------------------------
 
     const availableSlots =
@@ -1924,17 +1640,80 @@ function loadAvailableSlots(
 
 
     // --------------------------------------------------------
-    // GET available_slot_time FROM XLSX
+    // Read timings from database
+    //
+    // We deliberately do not reject timings because of the
+    // selected date. The Excel dataset may contain a fixed
+    // demonstration date, while the booking page uses today's
+    // date.
     // --------------------------------------------------------
 
-    let slotString =
+    const rawSlots =
         String(
             centre.available_slot_time ||
+            centre.available_slots_time ||
+            centre.slot_time ||
             ""
         ).trim();
 
 
-    if (!slotString) {
+    if (!rawSlots) {
+
+        // Fallback demo timings if the database has a slot
+        // count but no readable timing string.
+
+        const fallbackSlots = [
+            "09:00 AM – 10:00 AM",
+            "10:00 AM – 11:00 AM",
+            "11:00 AM – 12:00 PM",
+            "12:00 PM – 01:00 PM",
+            "02:00 PM – 03:00 PM",
+            "03:00 PM – 04:00 PM"
+        ];
+
+
+        addSlotOptions(
+            fallbackSlots.slice(
+                0,
+                Math.min(
+                    availableSlots,
+                    fallbackSlots.length
+                )
+            )
+        );
+
+
+        return;
+
+    }
+
+
+    let slots =
+        rawSlots
+            .split(
+                /[,;|]+/
+            )
+            .map(
+                function (slot) {
+
+                    return slot.trim();
+
+                }
+            )
+            .filter(
+                function (slot) {
+
+                    return (
+                        slot.length > 0
+                    );
+
+                }
+            );
+
+
+    if (
+        slots.length === 0
+    ) {
 
         slotSelect.innerHTML =
             `
@@ -1948,38 +1727,7 @@ function loadAvailableSlots(
     }
 
 
-    // --------------------------------------------------------
-    // Split timings
-    //
-    // Example:
-    //
-    // 13:00-14:00,
-    // 14:00-15:00,
-    // 15:00-16:00
-    // --------------------------------------------------------
-
-    let slots =
-        slotString
-            .split(",")
-            .map(
-                function (slot) {
-
-                    return slot.trim();
-
-                }
-            )
-            .filter(
-                function (slot) {
-
-                    return slot.length > 0;
-
-                }
-            );
-
-
-    // --------------------------------------------------------
-    // Limit according to available_slots
-    // --------------------------------------------------------
+    // Display only the number of slots currently available
 
     slots =
         slots.slice(
@@ -1988,12 +1736,42 @@ function loadAvailableSlots(
         );
 
 
-    // --------------------------------------------------------
-    // Add options
-    // --------------------------------------------------------
+    addSlotOptions(
+        slots
+    );
+
+}
+
+
+// ============================================================
+// ADD SLOT OPTIONS TO DROPDOWN
+// ============================================================
+
+function addSlotOptions(
+    slots
+) {
+
+    const slotSelect =
+        document.getElementById(
+            "slot"
+        );
+
+
+    if (!slotSelect) {
+        return;
+    }
+
+
+    slotSelect.innerHTML =
+        `
+        <option value="">
+            Select available time slot
+        </option>
+        `;
+
 
     slots.forEach(
-        function (slot, index) {
+        function (slot) {
 
             const option =
                 document.createElement(
@@ -2016,69 +1794,222 @@ function loadAvailableSlots(
         }
     );
 
+}
+// ============================================================
+// GPS LOCATION DETECTION
+// ============================================================
 
-    // --------------------------------------------------------
-    // If nothing created
-    // --------------------------------------------------------
+function detectGPS() {
+
+    const gpsStatus =
+        document.getElementById(
+            "gpsStatus"
+        );
+
 
     if (
-        slots.length ===
-        0
+        !navigator.geolocation
     ) {
 
-        slotSelect.innerHTML =
-            `
-            <option value="">
-                No slot timings available
-            </option>
-            `;
+        if (gpsStatus) {
+
+            gpsStatus.textContent =
+                "❌ GPS location is not supported by your browser.";
+
+        }
 
         return;
 
     }
 
 
-    console.log(
-        "Available timings for",
-        centre.centre_name,
-        ":",
-        slots
+    if (gpsStatus) {
+
+        gpsStatus.textContent =
+            "📍 Detecting your location...";
+
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        function (position) {
+
+            userLatitude =
+                position.coords.latitude;
+
+            userLongitude =
+                position.coords.longitude;
+
+
+            console.log(
+                "User GPS:",
+                userLatitude,
+                userLongitude
+            );
+
+
+            if (gpsStatus) {
+
+                gpsStatus.textContent =
+                    "✅ Location detected successfully.";
+
+            }
+
+
+            // Recalculate centre distances and recommendations
+
+            updateRecommendations();
+
+        },
+
+
+        function (error) {
+
+            console.error(
+                "GPS error:",
+                error
+            );
+
+
+            if (gpsStatus) {
+
+                let message =
+                    "❌ Unable to detect location.";
+
+                if (
+                    error.code ===
+                    error.PERMISSION_DENIED
+                ) {
+
+                    message =
+                        "❌ Location permission was denied.";
+
+                }
+                else if (
+                    error.code ===
+                    error.POSITION_UNAVAILABLE
+                ) {
+
+                    message =
+                        "❌ Location information is unavailable.";
+
+                }
+                else if (
+                    error.code ===
+                    error.TIMEOUT
+                ) {
+
+                    message =
+                        "❌ Location request timed out.";
+
+                }
+
+
+                gpsStatus.textContent =
+                    message;
+
+            }
+
+        },
+
+
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+
     );
 
 }
 
 
-
 // ============================================================
-// CLEAR SLOTS
+// GENERATE BOOKING TOKEN
 // ============================================================
 
-function clearSlots() {
+function generateToken() {
 
-    const slotSelect =
-        document.getElementById(
-            "slot"
+    const previousBooking =
+        JSON.parse(
+            localStorage.getItem(
+                "booking"
+            )
         );
 
 
-    if (!slotSelect) {
-        return;
+    if (
+        previousBooking &&
+        previousBooking.token
+    ) {
+
+        const oldToken =
+            Number(
+                previousBooking.token
+            );
+
+
+        if (
+            Number.isFinite(
+                oldToken
+            )
+        ) {
+
+            return (
+                oldToken + 1
+            );
+
+        }
+
     }
 
 
-    slotSelect.innerHTML =
-        `
-        <option value="">
-            Select suitable centre first
-        </option>
-        `;
+    const randomNumber =
+        Math.floor(
+            100 +
+            Math.random() *
+            900
+        );
+
+
+    return randomNumber;
 
 }
 
 
+// ============================================================
+// GENERATE BOOKING ID
+// ============================================================
+
+function generateBookingId() {
+
+    const timestamp =
+        Date.now()
+            .toString()
+            .slice(-6);
+
+
+    const random =
+        Math.floor(
+            100 +
+            Math.random() *
+            900
+        );
+
+
+    return (
+        "PS-" +
+        timestamp +
+        "-" +
+        random
+    );
+
+}
+
 
 // ============================================================
-// BOOK SLOT
+// BOOK PROCUREMENT SLOT
 // ============================================================
 
 function bookSlot(
@@ -2088,64 +2019,53 @@ function bookSlot(
     event.preventDefault();
 
 
-    // --------------------------------------------------------
-    // Get values
-    // --------------------------------------------------------
-
     const farmerName =
         document.getElementById(
             "farmerName"
-        ).value.trim();
-
-
-    const mobile =
-        document.getElementById(
-            "mobile"
-        ).value.trim();
+        );
 
 
     const produce =
         document.getElementById(
             "produce"
-        ).value;
+        );
 
 
     const quantity =
-        Number(
-            document.getElementById(
-                "quantity"
-            ).value
+        document.getElementById(
+            "quantity"
         );
 
 
     const date =
         document.getElementById(
             "date"
-        ).value;
+        );
+
+
+    const centre =
+        document.getElementById(
+            "centre"
+        );
 
 
     const slot =
         document.getElementById(
             "slot"
-        ).value;
-
-
-    const centreId =
-        document.getElementById(
-            "centre"
-        ).value;
+        );
 
 
     // --------------------------------------------------------
-    // Validation
+    // Basic validation
     // --------------------------------------------------------
 
     if (
-        !farmerName
+        !farmerName ||
+        !farmerName.value.trim()
     ) {
 
         alert(
-            "❌ Please enter farmer name."
+            "Please enter the farmer name."
         );
 
         return;
@@ -2154,13 +2074,12 @@ function bookSlot(
 
 
     if (
-        !/^[0-9]{10}$/.test(
-            mobile
-        )
+        !produce ||
+        !produce.value
     ) {
 
         alert(
-            "❌ Please enter a valid 10-digit mobile number."
+            "Please select the produce."
         );
 
         return;
@@ -2168,129 +2087,64 @@ function bookSlot(
     }
 
 
-    if (
-        !produce
-    ) {
-
-        alert(
-            "❌ Please select produce."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        !quantity ||
-        quantity <= 0
-    ) {
-
-        alert(
-            "❌ Please enter a valid quantity in quintals."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        userLatitude === null ||
-        userLongitude === null
-    ) {
-
-        alert(
-            "❌ Please detect your GPS location first."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        !date
-    ) {
-
-        alert(
-            "❌ Please select a date."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        !slot
-    ) {
-
-        alert(
-            "❌ Please select an available time slot."
-        );
-
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // Find centre
-    // --------------------------------------------------------
-
-    const centre =
-        procurementCentres.find(
-            function (item) {
-
-                return String(
-                    item.centre_id
-                ) === String(
-                    centreId
-                );
-
-            }
-        );
-
-
-    if (!centre) {
-
-        alert(
-            "❌ Please select a valid procurement centre."
-        );
-
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // Capacity check
-    // --------------------------------------------------------
-
-    const availableCapacity =
+    const enteredQuantity =
         Number(
-            centre.available_capacity_quintals
-        ) || 0;
+            quantity ?
+            quantity.value :
+            0
+        );
 
 
     if (
-        quantity >
-        availableCapacity
+        !enteredQuantity ||
+        enteredQuantity <= 0
     ) {
 
         alert(
+            "Please enter a valid quantity."
+        );
 
-            "❌ Insufficient capacity.\n\n" +
+        return;
 
-            "Available capacity: " +
-            availableCapacity +
-            " quintals\n" +
+    }
 
-            "Your quantity: " +
-            quantity +
-            " quintals"
 
+    if (
+        !date ||
+        !date.value
+    ) {
+
+        alert(
+            "Please select a preferred date."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !selectedCentre ||
+        !centre ||
+        !centre.value
+    ) {
+
+        alert(
+            "Please select a procurement centre."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !slot ||
+        !slot.value
+    ) {
+
+        alert(
+            "Please select an available time slot."
         );
 
         return;
@@ -2299,187 +2153,68 @@ function bookSlot(
 
 
     // --------------------------------------------------------
-    // Slot check
-    // --------------------------------------------------------
-
-    const availableSlots =
-        Number(
-            centre.available_slots
-        ) || 0;
-
-
-    if (
-        availableSlots <= 0
-    ) {
-
-        alert(
-            "❌ No slots are available."
-        );
-
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // Verify selected slot is actually in Excel
-    // --------------------------------------------------------
-
-    const excelSlots =
-        String(
-            centre.available_slot_time ||
-            ""
-        )
-        .split(",")
-        .map(
-            function (s) {
-
-                return s.trim();
-
-            }
-        )
-        .filter(
-            function (s) {
-
-                return s.length > 0;
-
-            }
-        );
-
-
-    if (
-        !excelSlots.includes(
-            slot
-        )
-    ) {
-
-        alert(
-            "❌ Selected slot is not available."
-        );
-
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // Generate token
+    // Generate booking details
     // --------------------------------------------------------
 
     const token =
-        Math.floor(
-            Math.random() * 900
-        ) + 100;
+        generateToken();
+
+
+    const bookingId =
+        generateBookingId();
+
+
+    const booking =
+        {
+            bookingId:
+                bookingId,
+
+            token:
+                token,
+
+            farmerName:
+                farmerName.value.trim(),
+
+            produce:
+                produce.value,
+
+            quantity:
+                enteredQuantity,
+
+            date:
+                date.value,
+
+            centreId:
+                selectedCentre.centre_id,
+
+            centreName:
+                selectedCentre.centre_name ||
+                "",
+
+            centreLocation:
+                selectedCentre.location ||
+                selectedCentre.district ||
+                "",
+
+            slot:
+                slot.value,
+
+            status:
+                "Confirmed",
+
+            createdAt:
+                new Date().toISOString(),
+
+            latitude:
+                userLatitude,
+
+            longitude:
+                userLongitude
+        };
 
 
     // --------------------------------------------------------
-    // Calculate distance
-    // --------------------------------------------------------
-
-    const distance =
-        calculateDistance(
-
-            userLatitude,
-            userLongitude,
-
-            Number(
-                centre.latitude
-            ),
-            Number(
-                centre.longitude
-            )
-
-        );
-
-
-    // --------------------------------------------------------
-    // Smart score
-    // --------------------------------------------------------
-
-    const smartScore =
-        calculateSmartScore(
-            {
-                ...centre,
-                distance:
-                    distance
-            }
-        );
-
-
-    // --------------------------------------------------------
-    // Booking object
-    // --------------------------------------------------------
-
-    const booking = {
-
-        farmerName:
-            farmerName,
-
-        mobile:
-            mobile,
-
-        produce:
-            produce,
-
-        quantityQuintals:
-            quantity,
-
-        latitude:
-            userLatitude,
-
-        longitude:
-            userLongitude,
-
-        centreId:
-            centre.centre_id,
-
-        centreName:
-            centre.centre_name,
-
-        district:
-            centre.district,
-
-        centreLocation:
-            centre.location,
-
-        centreLatitude:
-            Number(
-                centre.latitude
-            ),
-
-        centreLongitude:
-            Number(
-                centre.longitude
-            ),
-
-        distanceKm:
-            Number(
-                distance.toFixed(2)
-            ),
-
-        date:
-            date,
-
-        slot:
-            slot,
-
-        token:
-            token,
-
-        smartScore:
-            smartScore,
-
-        status:
-            "Slot Booked",
-
-        bookedAt:
-            new Date().toISOString()
-
-    };
-
-
-    // --------------------------------------------------------
-    // Save booking
+    // Save booking for tracking page
     // --------------------------------------------------------
 
     localStorage.setItem(
@@ -2490,6 +2225,15 @@ function bookSlot(
     );
 
 
+    // --------------------------------------------------------
+    // Save booking history
+    // --------------------------------------------------------
+
+    saveBookingToHistory(
+        booking
+    );
+
+
     console.log(
         "Booking created:",
         booking
@@ -2497,51 +2241,1207 @@ function bookSlot(
 
 
     // --------------------------------------------------------
-    // Confirmation
+    // Success message
     // --------------------------------------------------------
 
     alert(
+        "🎉 Booking Confirmed!\n\n" +
 
-        "✅ Procurement slot booked successfully!\n\n" +
-
-        "🎟 Token: #" +
+        "Token: #" +
         token +
+        "\n" +
 
+        "Booking ID: " +
+        bookingId +
         "\n\n" +
 
-        "🏢 Centre: " +
-        centre.centre_name +
-
-        "\n\n" +
-
-        "📏 Distance: " +
-        distance.toFixed(2) +
-        " km" +
-
-        "\n\n" +
-
-        "📅 Date: " +
-        date +
-
-        "\n\n" +
-
-        "🕐 Time: " +
-        slot +
-
-        "\n\n" +
-
-        "📦 Quantity: " +
-        quantity +
-        " quintals"
-
+        "You can now track your procurement status."
     );
 
 
     // --------------------------------------------------------
-    // Open queue page
+    // Redirect if tracking page exists
     // --------------------------------------------------------
 
     window.location.href =
-        "queue.html";
+        "tracking.html";
 
 }
+
+
+// ============================================================
+// SAVE BOOKING HISTORY
+// ============================================================
+
+function saveBookingToHistory(
+    booking
+) {
+
+    let history =
+        JSON.parse(
+            localStorage.getItem(
+                "bookingHistory"
+            )
+        );
+
+
+    if (
+        !Array.isArray(
+            history
+        )
+    ) {
+
+        history = [];
+
+    }
+
+
+    history.push(
+        booking
+    );
+
+
+    localStorage.setItem(
+        "bookingHistory",
+        JSON.stringify(
+            history
+        )
+    );
+
+}
+
+
+// ============================================================
+// GET BOOKING HISTORY
+// ============================================================
+
+function getBookingHistory() {
+
+    const history =
+        JSON.parse(
+            localStorage.getItem(
+                "bookingHistory"
+            )
+        );
+
+
+    if (
+        Array.isArray(
+            history
+        )
+    ) {
+
+        return history;
+
+    }
+
+
+    return [];
+
+}
+// ============================================================
+// UPDATE BOOKING STATUS
+// ============================================================
+
+function updateBookingStatus(
+    newStatus
+) {
+
+    const booking =
+        JSON.parse(
+            localStorage.getItem(
+                "booking"
+            )
+        );
+
+
+    if (!booking) {
+
+        return false;
+
+    }
+
+
+    booking.status =
+        newStatus;
+
+
+    booking.updatedAt =
+        new Date().toISOString();
+
+
+    localStorage.setItem(
+        "booking",
+        JSON.stringify(
+            booking
+        )
+    );
+
+
+    // Update the same booking in history
+
+    let history =
+        getBookingHistory();
+
+
+    history =
+        history.map(
+            function (item) {
+
+                if (
+                    item.bookingId ===
+                    booking.bookingId
+                ) {
+
+                    return booking;
+
+                }
+
+                return item;
+
+            }
+        );
+
+
+    localStorage.setItem(
+        "bookingHistory",
+        JSON.stringify(
+            history
+        )
+    );
+
+
+    return true;
+
+}
+
+
+// ============================================================
+// GET CURRENT BOOKING
+// ============================================================
+
+function getCurrentBooking() {
+
+    try {
+
+        const booking =
+            JSON.parse(
+                localStorage.getItem(
+                    "booking"
+                )
+            );
+
+
+        return booking || null;
+
+    }
+    catch (error) {
+
+        console.error(
+            "Could not read booking:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+// ============================================================
+// GET BOOKING BY ID
+// ============================================================
+
+function getBookingById(
+    bookingId
+) {
+
+    const history =
+        getBookingHistory();
+
+
+    return (
+        history.find(
+            function (booking) {
+
+                return (
+                    String(
+                        booking.bookingId
+                    ) ===
+                    String(
+                        bookingId
+                    )
+                );
+
+            }
+        ) || null
+    );
+
+}
+
+
+// ============================================================
+// FORMAT DATE FOR DISPLAY
+// ============================================================
+
+function formatDisplayDate(
+    value
+) {
+
+    if (!value) {
+
+        return "Not available";
+
+    }
+
+
+    const date =
+        parseExcelDate(
+            value
+        );
+
+
+    if (!date) {
+
+        return String(value);
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+// ============================================================
+// FORMAT BOOKING DATE
+// ============================================================
+
+function formatBookingDate(
+    value
+) {
+
+    if (!value) {
+
+        return "Not available";
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if (
+        isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return formatDisplayDate(
+            value
+        );
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+// ============================================================
+// GET STATUS INFORMATION
+// ============================================================
+
+function getStatusInfo(
+    status
+) {
+
+    const normalized =
+        normalizeText(
+            status
+        );
+
+
+    const statusMap =
+        {
+
+            "confirmed": {
+                icon: "📅",
+                title: "Booking Confirmed",
+                description:
+                    "Your procurement slot has been successfully reserved.",
+                step: 1
+            },
+
+            "scheduled": {
+                icon: "📅",
+                title: "Booking Scheduled",
+                description:
+                    "Your procurement visit has been scheduled.",
+                step: 1
+            },
+
+            "arrived": {
+                icon: "📍",
+                title: "Arrived at Centre",
+                description:
+                    "Your arrival has been registered at the procurement centre.",
+                step: 2
+            },
+
+            "waiting": {
+                icon: "🕐",
+                title: "Waiting in Queue",
+                description:
+                    "Please wait for your token to be called.",
+                step: 3
+            },
+
+            "processing": {
+                icon: "⚙️",
+                title: "Procurement in Progress",
+                description:
+                    "Your produce is currently being processed.",
+                step: 4
+            },
+
+            "completed": {
+                icon: "✅",
+                title: "Procurement Completed",
+                description:
+                    "Your procurement process has been completed successfully.",
+                step: 5
+            },
+
+            "cancelled": {
+                icon: "❌",
+                title: "Booking Cancelled",
+                description:
+                    "This procurement booking has been cancelled.",
+                step: 0
+            }
+
+        };
+
+
+    return (
+        statusMap[normalized] ||
+        statusMap["confirmed"]
+    );
+
+}
+
+
+// ============================================================
+// CALCULATE PEOPLE AHEAD
+// ============================================================
+
+function calculatePeopleAhead(
+    booking
+) {
+
+    if (
+        !booking ||
+        !booking.token
+    ) {
+
+        return 0;
+
+    }
+
+
+    const currentToken =
+        Number(
+            localStorage.getItem(
+                "currentServingToken"
+            )
+        ) || 35;
+
+
+    const bookingToken =
+        Number(
+            booking.token
+        );
+
+
+    return Math.max(
+        bookingToken -
+        currentToken -
+        1,
+        0
+    );
+
+}
+
+
+// ============================================================
+// CALCULATE ESTIMATED WAIT
+// ============================================================
+
+function calculateEstimatedWait(
+    booking
+) {
+
+    const peopleAhead =
+        calculatePeopleAhead(
+            booking
+        );
+
+
+    // Estimated average processing time:
+    // 5 minutes per farmer
+
+    return (
+        peopleAhead * 5
+    );
+
+}
+
+
+// ============================================================
+// GET CURRENT SERVING TOKEN
+// ============================================================
+
+function getCurrentServingToken() {
+
+    return (
+        Number(
+            localStorage.getItem(
+                "currentServingToken"
+            )
+        ) || 35
+    );
+
+}
+
+
+// ============================================================
+// SET CURRENT SERVING TOKEN
+// ============================================================
+
+function setCurrentServingToken(
+    token
+) {
+
+    const validToken =
+        Number(token);
+
+
+    if (
+        !Number.isFinite(
+            validToken
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    localStorage.setItem(
+        "currentServingToken",
+        String(validToken)
+    );
+
+
+    return true;
+
+}
+// ============================================================
+// GET BOOKING PROGRESS STEPS
+// ============================================================
+
+function getBookingProgress(
+    booking
+) {
+
+    const statusInfo =
+        getStatusInfo(
+            booking ?
+            booking.status :
+            "confirmed"
+        );
+
+
+    const currentStep =
+        statusInfo.step;
+
+
+    return [
+
+        {
+            step: 1,
+            title: "Booked",
+            completed:
+                currentStep >= 1
+        },
+
+        {
+            step: 2,
+            title: "Arrived",
+            completed:
+                currentStep >= 2
+        },
+
+        {
+            step: 3,
+            title: "In Queue",
+            completed:
+                currentStep >= 3
+        },
+
+        {
+            step: 4,
+            title: "Processing",
+            completed:
+                currentStep >= 4
+        },
+
+        {
+            step: 5,
+            title: "Completed",
+            completed:
+                currentStep >= 5
+        }
+
+    ];
+
+}
+
+
+// ============================================================
+// CANCEL CURRENT BOOKING
+// ============================================================
+
+function cancelBooking() {
+
+    const booking =
+        getCurrentBooking();
+
+
+    if (!booking) {
+
+        alert(
+            "No active booking found."
+        );
+
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to cancel this booking?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    updateBookingStatus(
+        "Cancelled"
+    );
+
+
+    alert(
+        "Your booking has been cancelled."
+    );
+
+
+    window.location.reload();
+
+}
+
+
+// ============================================================
+// CLEAR CURRENT BOOKING
+// ============================================================
+
+function clearCurrentBooking() {
+
+    localStorage.removeItem(
+        "booking"
+    );
+
+}
+
+
+// ============================================================
+// GET RECOMMENDED CENTRE
+// ============================================================
+
+function getRecommendedCentre() {
+
+    const centres =
+        getSuitableCentres();
+
+
+    if (
+        !centres ||
+        centres.length === 0
+    ) {
+
+        return null;
+
+    }
+
+
+    return centres[0];
+
+}
+
+
+// ============================================================
+// DEBUG CENTRE FILTERING
+// ============================================================
+
+function debugCentreRecommendation() {
+
+    const produceElement =
+        document.getElementById(
+            "produce"
+        );
+
+
+    const quantityElement =
+        document.getElementById(
+            "quantity"
+        );
+
+
+    console.group(
+        "ProcureSmart Centre Recommendation Debug"
+    );
+
+
+    console.log(
+        "Total database centres:",
+        procurementCentres.length
+    );
+
+
+    console.log(
+        "Selected produce:",
+        produceElement ?
+        produceElement.value :
+        ""
+    );
+
+
+    console.log(
+        "Selected quantity:",
+        quantityElement ?
+        quantityElement.value :
+        ""
+    );
+
+
+    console.log(
+        "Selected date:",
+        getSelectedDate()
+    );
+
+
+    console.log(
+        "User GPS:",
+        userLatitude,
+        userLongitude
+    );
+
+
+    const suitable =
+        getSuitableCentres();
+
+
+    console.log(
+        "Suitable centres found:",
+        suitable.length
+    );
+
+
+    console.table(
+        suitable.slice(
+            0,
+            10
+        )
+    );
+
+
+    console.groupEnd();
+
+
+    return suitable;
+
+}
+
+
+// ============================================================
+// VALIDATE DATABASE STRUCTURE
+// ============================================================
+
+function validateProcurementData() {
+
+    if (
+        !Array.isArray(
+            procurementCentres
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    if (
+        procurementCentres.length === 0
+    ) {
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+// ============================================================
+// REFRESH CENTRE RECOMMENDATION
+// ============================================================
+
+function refreshCentreRecommendation() {
+
+    if (
+        !validateProcurementData()
+    ) {
+
+        return;
+
+    }
+
+
+    updateRecommendations();
+
+}
+
+
+// ============================================================
+// RESET BOOKING FORM
+// ============================================================
+
+function resetBookingForm() {
+
+    const form =
+        document.getElementById(
+            "bookingForm"
+        );
+
+
+    if (form) {
+
+        form.reset();
+
+    }
+
+
+    selectedCentre =
+        null;
+
+
+    clearCentreInformation();
+
+
+    clearAvailableSlots();
+
+
+    setupDate();
+
+}
+
+
+// ============================================================
+// CHECK IF USER HAS ACTIVE BOOKING
+// ============================================================
+
+function hasActiveBooking() {
+
+    const booking =
+        getCurrentBooking();
+
+
+    if (!booking) {
+        return false;
+    }
+
+
+    const status =
+        normalizeText(
+            booking.status
+        );
+
+
+    return (
+        status !== "completed" &&
+        status !== "cancelled"
+    );
+
+}
+
+
+// ============================================================
+// GET ACTIVE BOOKING MESSAGE
+// ============================================================
+
+function getActiveBookingMessage() {
+
+    const booking =
+        getCurrentBooking();
+
+
+    if (!booking) {
+
+        return "";
+
+    }
+
+
+    if (
+        !hasActiveBooking()
+    ) {
+
+        return "";
+
+    }
+
+
+    return (
+        "You already have an active booking " +
+        "(Token #" +
+        booking.token +
+        ")."
+    );
+
+}
+
+
+// ============================================================
+// PAGE-SAFE INITIALIZATION HELPERS
+// ============================================================
+
+// These functions allow script.js to be included on other pages
+// without breaking those pages if booking-form elements are absent.
+
+function isFarmerPage() {
+
+    return Boolean(
+        document.getElementById(
+            "bookingForm"
+        )
+    );
+
+}
+
+
+function isTrackingPage() {
+
+    return Boolean(
+        document.getElementById(
+            "trackingContainer"
+        ) ||
+        document.getElementById(
+            "trackingStatus"
+        ) ||
+        document.getElementById(
+            "token"
+        )
+    );
+
+}
+
+
+// ============================================================
+// STORAGE SAFETY CHECK
+// ============================================================
+
+function storageAvailable() {
+
+    try {
+
+        const testKey =
+            "__procureSmartTest__";
+
+
+        localStorage.setItem(
+            testKey,
+            "1"
+        );
+
+
+        localStorage.removeItem(
+            testKey
+        );
+
+
+        return true;
+
+    }
+    catch (error) {
+
+        console.error(
+            "Local storage unavailable:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+// ============================================================
+// INITIAL APPLICATION CHECK
+// ============================================================
+
+if (
+    storageAvailable()
+) {
+
+    console.log(
+        "ProcureSmart local storage is ready."
+    );
+
+}
+// ============================================================
+// TRACKING PAGE SUPPORT
+// ============================================================
+
+// Return a clean summary of the current booking.
+// This is useful for tracking.html or any future dashboard.
+
+function getTrackingData() {
+
+    const booking =
+        getCurrentBooking();
+
+
+    if (!booking) {
+
+        return null;
+
+    }
+
+
+    const peopleAhead =
+        calculatePeopleAhead(
+            booking
+        );
+
+
+    const estimatedWait =
+        calculateEstimatedWait(
+            booking
+        );
+
+
+    const statusInfo =
+        getStatusInfo(
+            booking.status
+        );
+
+
+    return {
+
+        booking:
+            booking,
+
+        currentServingToken:
+            getCurrentServingToken(),
+
+        peopleAhead:
+            peopleAhead,
+
+        estimatedWait:
+            estimatedWait,
+
+        statusInfo:
+            statusInfo,
+
+        progress:
+            getBookingProgress(
+                booking
+            )
+
+    };
+
+}
+
+
+// ============================================================
+// UPDATE TRACKING PAGE ELEMENTS
+// ============================================================
+
+function updateTrackingPage() {
+
+    const tracking =
+        getTrackingData();
+
+
+    if (!tracking) {
+
+        return false;
+
+    }
+
+
+    const booking =
+        tracking.booking;
+
+
+    // Token
+
+    const tokenElement =
+        document.getElementById(
+            "token"
+        );
+
+
+    if (tokenElement) {
+
+        tokenElement.textContent =
+            "#" + booking.token;
+
+    }
+
+
+    // Current serving token
+
+    const currentTokenElement =
+        document.getElementById(
+            "currentToken"
+        );
+
+
+    if (currentTokenElement) {
+
+        currentTokenElement.textContent =
+            tracking.currentServingToken;
+
+    }
+
+
+    // People ahead
+
+    const peopleAheadElement =
+        document.getElementById(
+            "peopleAhead"
+        );
+
+
+    if (peopleAheadElement) {
+
+        peopleAheadElement.textContent =
+            tracking.peopleAhead;
+
+    }
+
+
+    // Estimated wait
+
+    const waitTimeElement =
+        document.getElementById(
+            "waitTime"
+        );
+
+
+    if (waitTimeElement) {
+
+        waitTimeElement.textContent =
+            tracking.estimatedWait;
+
+    }
+
+
+    // Queue status
+
+    const queueStatusElement =
+        document.getElementById(
+            "queueStatus"
+        );
+
+
+    if (queueStatusElement) {
+
+        if (
+            tracking.peopleAhead === 0
+        ) {
+
+            queueStatusElement.textContent =
+                "🟢 It is almost your turn. Please remain ready.";
+
+        }
+        else {
+
+            queueStatusElement.textContent =
+                "🟢 Queue is moving normally. " +
+                tracking.peopleAhead +
+                " farmer(s) are ahead of you.";
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+// ============================================================
+// AUTOMATIC TRACKING PAGE INITIALIZATION
+// ============================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        if (
+            isTrackingPage()
+        ) {
+
+            updateTrackingPage();
+
+        }
+
+    }
+);
+
+
+// ============================================================
+// FINAL DEBUG MESSAGE
+// ============================================================
+
+console.log(
+    "ProcureSmart script.js loaded successfully."
+);
