@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Produce Passport - ProcureSmart</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        .passport-container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        .passport-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+            margin-top: 25px;
+        }
+
+        .passport-header {
+            padding: 30px;
+            background: linear-gradient(
+                120deg,
+                #1b5e20,
+                #2e7d32
+            );
+            color: white;
+        }
+
+        .passport-title {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .batch-id {
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+
+        .passport-body {
+            padding: 30px;
+        }
+
+        .passport-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .passport-info {
+            padding: 18px;
+            background: #f5f8f3;
+            border-radius: 12px;
+        }
+
+        .passport-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .passport-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .passport-timeline {
+            margin-top: 20px;
+        }
+
+        .passport-stage {
+            display: flex;
+            gap: 18px;
+            padding: 18px 0;
+            border-bottom: 1px solid #e0e0e0;
+            align-items: center;
+        }
+
+        .passport-stage:last-child {
+            border-bottom: none;
+        }
+
+        .passport-stage-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e8f5e9;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .passport-stage.completed
+        .passport-stage-icon {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .passport-stage-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .passport-stage-text {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .passport-status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            background: #fff8e1;
+        }
+
+        .quality-section {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 14px;
+            background: #f5f8f3;
+        }
+
+        .quality-grade {
+            font-size: 45px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .no-booking {
+            background: #fff3f3;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #d32f2f;
+            margin-top: 25px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌾 ProcureSmart
+    </div>
+
+    <div class="nav-links">
+
+        <a href="index.html">Home</a>
+        <a href="farmer.html">Farmer</a>
+        <a href="tracking.html">Tracking</a>
+
+    </div>
+
+</nav>
+
+
+
+<section class="features">
+
+    <div class="passport-container">
+
+        <h1>
+            🌾 Digital Produce Passport
+        </h1>
+
+        <p>
+            A transparent digital record of your produce's
+            procurement journey.
+        </p>
+
+
+        <div
+            id="noBooking"
+            class="no-booking"
+            style="display:none;"
+        >
+
+            <h2>
+                ❌ No Produce Record Found
+            </h2>
+
+            <br>
+
+            <p>
+                Your Digital Produce Passport will be created
+                after you successfully book a procurement slot.
+            </p>
+
+            <br>
+
+            <a
+                href="farmer.html"
+                class="btn"
+            >
+                📅 Book a Slot
+            </a>
+
+        </div>
+
+
+
+        <div
+            id="passportContent"
+            class="passport-card"
+        >
+
+
+            <div class="passport-header">
+
+                <div class="passport-title">
+                    🌾 PROCURESMART PRODUCE PASSPORT
+                </div>
+
+                <div
+                    class="batch-id"
+                    id="batchId"
+                >
+                    Batch ID: --
+                </div>
+
+            </div>
+
+
+
+            <div class="passport-body">
+
+
+                <div class="passport-grid">
+
+
+                    <div class="passport-info">
+
+                        <div class="passport-label">
+                            👨‍🌾 Farmer
+                        </div>
+
+                        <div
+                            class="passport-value"
+                            id="farmerValue"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="passport-info">
+
+                        <div class="passport-label">
+                            🌾 Produce
+                        </div>
+
+                        <div
+                            class="passport-value"
+                            id="produceValue"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="passport-info">
+
+                        <div class="passport-label">
+                            📦 Quantity
+                        </div>
+
+                        <div
+                            class="passport-value"
+                            id="quantityValue"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="passport-info">
+
+                        <div class="passport-label">
+                            🏢 Centre
+                        </div>
+
+                        <div
+                            class="passport-value"
+                            id="centreValue"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <h2>
+                    📍 Produce Journey
+                </h2>
+
+
+                <div class="passport-timeline">
+
+
+                    <div
+                        class="passport-stage"
+                        id="passportStage0"
+                    >
+
+                        <div class="passport-stage-icon">
+                            📅
+                        </div>
+
+                        <div>
+
+                            <div class="passport-stage-title">
+                                Procurement Slot Booked
+                            </div>
+
+                            <div class="passport-stage-text">
+                                The farmer reserved a procurement slot.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="passport-stage"
+                        id="passportStage1"
+                    >
+
+                        <div class="passport-stage-icon">
+                            📍
+                        </div>
+
+                        <div>
+
+                            <div class="passport-stage-title">
+                                Arrived at Procurement Centre
+                            </div>
+
+                            <div class="passport-stage-text">
+                                Produce arrived for procurement.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="passport-stage"
+                        id="passportStage2"
+                    >
+
+                        <div class="passport-stage-icon">
+                            🔍
+                        </div>
+
+                        <div>
+
+                            <div class="passport-stage-title">
+                                Quality Verification
+                            </div>
+
+                            <div class="passport-stage-text">
+                                Produce quality and eligibility are checked.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="passport-stage"
+                        id="passportStage3"
+                    >
+
+                        <div class="passport-stage-icon">
+                            ⚖️
+                        </div>
+
+                        <div>
+
+                            <div class="passport-stage-title">
+                                Produce Accepted & Weighed
+                            </div>
+
+                            <div class="passport-stage-text">
+                                Final accepted quantity is recorded.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="passport-stage"
+                        id="passportStage4"
+                    >
+
+                        <div class="passport-stage-icon">
+                            💳
+                        </div>
+
+                        <div>
+
+                            <div class="passport-stage-title">
+                                Payment Processing
+                            </div>
+
+                            <div class="passport-stage-text">
+                                Payment is being prepared for the farmer.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="passport-stage"
+                        id="passportStage5"
+                    >
+
+                        <div class="passport-stage-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <div class="passport-stage-title">
+                                Procurement Completed
+                            </div>
+
+                            <div class="passport-stage-text">
+                                The produce journey has been successfully completed.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="quality-section">
+
+                    <h2>
+                        ⭐ Quality & Procurement Status
+                    </h2>
+
+                    <div
+                        class="quality-grade"
+                        id="qualityGrade"
+                    >
+                        Pending
+                    </div>
+
+                    <p
+                        id="qualityText"
+                    >
+                        Quality verification will be updated during procurement.
+                    </p>
+
+                </div>
+
+
+
+                <div
+                    class="passport-status"
+                    id="passportStatus"
+                >
+
+                    🟡 Passport Status:
+                    Booking Confirmed
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<script>
+
+
+const booking =
+    JSON.parse(
+        localStorage.getItem("booking")
+    );
+
+
+let trackingStage =
+    Number(
+        localStorage.getItem("trackingStage")
+    );
+
+
+if (
+    isNaN(trackingStage) ||
+    trackingStage < 0 ||
+    trackingStage > 5
+) {
+
+    trackingStage = 0;
+
+}
+
+
+
+if (!booking) {
+
+    document.getElementById(
+        "passportContent"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "noBooking"
+    ).style.display = "block";
+
+}
+
+
+else {
+
+
+    const token =
+        booking.token ||
+        Math.floor(
+            Math.random() * 9000
+        ) + 1000;
+
+
+    const batch =
+        "PS-" +
+        new Date().getFullYear() +
+        "-" +
+        String(token).padStart(
+            4,
+            "0"
+        );
+
+
+    document.getElementById(
+        "batchId"
+    ).innerText =
+        "Batch ID: " +
+        batch;
+
+
+    document.getElementById(
+        "farmerValue"
+    ).innerText =
+
+        booking.farmerName ||
+        booking.name ||
+        "--";
+
+
+    document.getElementById(
+        "produceValue"
+    ).innerText =
+        booking.produce ||
+        "--";
+
+
+    document.getElementById(
+        "quantityValue"
+    ).innerText =
+
+        booking.quantity
+            ? booking.quantity + " Quintals"
+            : "--";
+
+
+    document.getElementById(
+        "centreValue"
+    ).innerText =
+
+        booking.centre ||
+        booking.centreName ||
+        "--";
+
+
+    for (
+        let i = 0;
+        i <= trackingStage;
+        i++
+    ) {
+
+        document.getElementById(
+            "passportStage" + i
+        ).classList.add(
+            "completed"
+        );
+
+    }
+
+
+    let statusText =
+        "🟡 Passport Status: ";
+
+
+    if (
+        trackingStage === 0
+    ) {
+
+        statusText +=
+            "Booking Confirmed";
+
+    }
+
+
+    else if (
+        trackingStage === 1
+    ) {
+
+        statusText +=
+            "Produce Arrived";
+
+    }
+
+
+    else if (
+        trackingStage === 2
+    ) {
+
+        statusText +=
+            "Quality Verification in Progress";
+
+    }
+
+
+    else if (
+        trackingStage === 3
+    ) {
+
+        statusText +=
+            "Produce Accepted";
+
+
+        document.getElementById(
+            "qualityGrade"
+        ).innerText =
+            "Grade A";
+
+
+        document.getElementById(
+            "qualityText"
+        ).innerText =
+            "Produce has successfully passed verification and has been accepted for procurement.";
+
+    }
+
+
+    else if (
+        trackingStage === 4
+    ) {
+
+        statusText +=
+            "Payment Processing";
+
+
+        document.getElementById(
+            "qualityGrade"
+        ).innerText =
+            "Grade A";
+
+    }
+
+
+    else if (
+        trackingStage === 5
+    ) {
+
+        statusText =
+            "🟢 Passport Status: Procurement Completed";
+
+
+        document.getElementById(
+            "qualityGrade"
+        ).innerText =
+            "Grade A – Verified";
+
+    }
+
+
+    document.getElementById(
+        "passportStatus"
+    ).innerText =
+        statusText;
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
