@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Track Procurement - ProcureSmart</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        .tracking-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .tracking-subtitle {
+            color: #666;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            font-size: 17px;
+        }
+
+        .status-banner {
+            background: linear-gradient(
+                135deg,
+                #e8f5e9,
+                #f7fff8
+            );
+
+            border-left: 5px solid #2e7d32;
+
+            padding: 25px;
+
+            border-radius: 12px;
+
+            margin-bottom: 30px;
+        }
+
+        .status-banner h2 {
+            margin-bottom: 10px;
+        }
+
+        .status-banner p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .progress-wrapper {
+            margin: 30px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 14px;
+            background: #e0e0e0;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #2e7d32;
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        .timeline {
+            margin-top: 25px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 20px;
+            padding-bottom: 28px;
+            position: relative;
+        }
+
+        .timeline-item:not(:last-child)::before {
+            content: "";
+
+            position: absolute;
+
+            left: 19px;
+
+            top: 42px;
+
+            width: 3px;
+
+            height: calc(100% - 20px);
+
+            background: #ddd;
+        }
+
+        .timeline-icon {
+            width: 42px;
+            height: 42px;
+
+            min-width: 42px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #e0e0e0;
+
+            font-size: 18px;
+
+            z-index: 1;
+        }
+
+        .timeline-item.completed .timeline-icon {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .timeline-item.current .timeline-icon {
+            background: #f9a825;
+            color: white;
+        }
+
+        .timeline-item.completed::before {
+            background: #2e7d32;
+        }
+
+        .timeline-content {
+            padding-top: 6px;
+        }
+
+        .timeline-content h3 {
+            margin-bottom: 7px;
+        }
+
+        .timeline-content p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .details-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(220px, 1fr));
+
+            gap: 18px;
+
+            margin-top: 20px;
+        }
+
+        .detail-box {
+            background: #f8faf8;
+
+            border: 1px solid #e5e5e5;
+
+            padding: 18px;
+
+            border-radius: 10px;
+        }
+
+        .detail-label {
+            font-size: 13px;
+
+            color: #777;
+
+            margin-bottom: 7px;
+        }
+
+        .detail-value {
+            font-size: 17px;
+
+            font-weight: bold;
+
+            color: #263238;
+
+            word-break: break-word;
+        }
+
+        .payment-box {
+            margin-top: 25px;
+
+            padding: 20px;
+
+            border-radius: 12px;
+
+            background: #fff8e1;
+
+            border-left: 5px solid #f9a825;
+        }
+
+        .payment-box.completed {
+            background: #e8f5e9;
+            border-left-color: #2e7d32;
+        }
+
+        .payment-box h3 {
+            margin-bottom: 8px;
+        }
+
+        .payment-box p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .tracking-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .tracking-actions button {
+            border: none;
+            cursor: pointer;
+        }
+
+        .reset-btn {
+            background: #607d8b;
+        }
+
+        .reset-btn:hover {
+            background: #455a64;
+        }
+
+        .empty-booking {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .empty-booking h2 {
+            margin-bottom: 15px;
+        }
+
+        .empty-booking p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 700px) {
+
+            .features {
+                padding: 40px 5%;
+            }
+
+            .timeline-item {
+                gap: 14px;
+            }
+
+            .tracking-actions {
+                flex-direction: column;
+            }
+
+            .tracking-actions .btn {
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- NAVIGATION -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌾 ProcureSmart
+    </div>
+
+    <div class="nav-links">
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="farmer.html">
+            Farmer
+        </a>
+
+        <a href="centre.html">
+            Centre
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- TRACKING PAGE -->
+
+<section class="features">
+
+    <div class="tracking-container">
+
+
+        <h1>
+            📦 Track Your Procurement
+        </h1>
+
+        <p class="tracking-subtitle">
+            Follow your produce from slot booking to final payment.
+        </p>
+
+
+        <!-- NO BOOKING MESSAGE -->
+
+        <div
+            id="noBooking"
+            class="feature-card empty-booking"
+            style="display:none;"
+        >
+
+            <h2>
+                No Active Booking Found
+            </h2>
+
+            <p>
+                Please create a procurement booking first to track its progress.
+            </p>
+
+            <a
+                href="farmer.html"
+                class="btn"
+            >
+                📅 Book a Slot
+            </a>
+
+        </div>
+
+
+
+        <!-- TRACKING CONTENT -->
+
+        <div
+            id="trackingContent"
+            style="display:none;"
+        >
+
+
+            <!-- CURRENT STATUS -->
+
+            <div class="status-banner">
+
+                <h2 id="currentStatus">
+                    Loading Status...
+                </h2>
+
+                <p id="statusDescription">
+                    Please wait while we load your procurement information.
+                </p>
+
+            </div>
+
+
+
+            <!-- PROGRESS -->
+
+            <div class="feature-card">
+
+                <h2>
+                    📊 Procurement Progress
+                </h2>
+
+                <div class="progress-wrapper">
+
+                    <div class="progress-label">
+
+                        <span>
+                            Overall Progress
+                        </span>
+
+                        <span id="progressPercent">
+                            0%
+                        </span>
+
+                    </div>
+
+                    <div class="progress-bar">
+
+                        <div
+                            id="progressFill"
+                            class="progress-fill"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <br>
+
+
+
+            <!-- BOOKING DETAILS -->
+
+            <div class="feature-card">
+
+                <h2>
+                    🧾 Booking Details
+                </h2>
+
+                <div class="details-grid">
+
+
+                    <div class="detail-box">
+
+                        <div class="detail-label">
+                            👨‍🌾 Farmer
+                        </div>
+
+                        <div
+                            class="detail-value"
+                            id="farmerValue"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <div class="detail-label">
+                            🎟️ Token Number
+                        </div>
+
+                        <div
+                            class="detail-value"
+                            id="tokenValue"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <div class="detail-label">
+                            🏢 Procurement Centre
+                        </div>
+
+                        <div
+                            class="detail-value"
+                            id="centreValue"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <div class="detail-label">
+                            🌾 Produce
+                        </div>
+
+                        <div
+                            class="detail-value"
+                            id="produceValue"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <div class="detail-label">
+                            📦 Quantity
+                        </div>
+
+                        <div
+                            class="detail-value"
+                            id="quantityValue"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <div class="detail-label">
+                            📅 Booking Date
+                        </div>
+
+                        <div
+                            class="detail-value"
+                            id="dateValue"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <div class="detail-label">
+                            🕐 Time Slot
+                        </div>
+
+                        <div
+                            class="detail-value"
+                            id="slotValue"
+                        >
+                            --
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <br>
+
+
+
+            <!-- TIMELINE -->
+
+            <div class="feature-card">
+
+                <h2>
+                    🚜 Procurement Journey
+                </h2>
+
+                <br>
+
+                <div
+                    class="timeline"
+                    id="timeline"
+                ></div>
+
+            </div>
+
+
+
+            <!-- PAYMENT -->
+
+            <div
+                id="paymentBox"
+                class="payment-box"
+            >
+
+                <h3>
+                    💰 Payment Status
+                </h3>
+
+                <p id="paymentStatus">
+                    Awaiting completion of procurement process.
+                </p>
+
+            </div>
+
+
+
+            <!-- DEMO CONTROLS -->
+
+            <div class="tracking-actions">
+
+                <button
+                    id="nextStageButton"
+                    class="btn"
+                >
+                    ➡️ Move to Next Stage
+                </button>
+
+                <button
+                    id="resetButton"
+                    class="btn reset-btn"
+                >
+                    🔄 Reset Tracking Demo
+                </button>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<script>
+
+
+/* =========================================================
+   GET BOOKING
+========================================================= */
+
+const booking = JSON.parse(
+    localStorage.getItem("booking")
+);
+
+
+/* =========================================================
+   PROCUREMENT STAGES
+========================================================= */
+
+const stages = [
+
+    {
+        title: "Slot Booked",
+        icon: "📅",
+        description:
+            "Your procurement slot has been successfully reserved."
+    },
+
+    {
+        title: "Arrived at Centre",
+        icon: "📍",
+        description:
+            "The farmer and produce have arrived at the procurement centre."
+    },
+
+    {
+        title: "Quality Verification",
+        icon: "🔍",
+        description:
+            "The produce is being checked for quality and eligibility."
+    },
+
+    {
+        title: "Produce Accepted",
+        icon: "✅",
+        description:
+            "Your produce has been accepted for procurement."
+    },
+
+    {
+        title: "Payment Processing",
+        icon: "💳",
+        description:
+            "Payment is being processed for the accepted produce."
+    },
+
+    {
+        title: "Payment Completed",
+        icon: "💰",
+        description:
+            "Procurement is complete and payment has been successfully processed."
+    }
+
+];
+
+
+
+/* =========================================================
+   CURRENT TRACKING STAGE
+========================================================= */
+
+let currentStage = Number(
+    localStorage.getItem("trackingStage")
+);
+
+if (
+    isNaN(currentStage) ||
+    currentStage < 0 ||
+    currentStage >= stages.length
+) {
+
+    currentStage = 0;
+
+}
+
+
+
+/* =========================================================
+   LOAD PAGE
+========================================================= */
+
+if (!booking) {
+
+    document.getElementById("noBooking")
+        .style.display = "block";
+
+} else {
+
+    document.getElementById("trackingContent")
+        .style.display = "block";
+
+    loadBookingDetails();
+
+    renderTracking();
+
+}
+
+
+
+/* =========================================================
+   BOOKING DETAILS
+========================================================= */
+
+function loadBookingDetails() {
+
+    document.getElementById("farmerValue")
+        .innerText =
+        booking.name ||
+        booking.farmerName ||
+        "--";
+
+
+    document.getElementById("tokenValue")
+        .innerText =
+        booking.token
+            ? "#" + booking.token
+            : "--";
+
+
+    document.getElementById("centreValue")
+        .innerText =
+        booking.centre ||
+        booking.center ||
+        "--";
+
+
+    document.getElementById("produceValue")
+        .innerText =
+        booking.produce ||
+        "--";
+
+
+    document.getElementById("quantityValue")
+        .innerText =
+        booking.quantity
+            ? booking.quantity + " Quintals"
+            : "--";
+
+
+    document.getElementById("dateValue")
+        .innerText =
+        booking.date ||
+        "--";
+
+
+    document.getElementById("slotValue")
+        .innerText =
+        booking.slot ||
+        "--";
+
+}
+
+
+
+/* =========================================================
+   RENDER TRACKING
+========================================================= */
+
+function renderTracking() {
+
+    const stage = stages[currentStage];
+
+
+    /* CURRENT STATUS */
+
+    document.getElementById("currentStatus")
+        .innerText =
+        "🟢 Current Status: " +
+        stage.title;
+
+
+    document.getElementById("statusDescription")
+        .innerText =
+        stage.description;
+
+
+
+    /* PROGRESS */
+
+    const progress =
+        Math.round(
+            ((currentStage + 1) / stages.length) * 100
+        );
+
+
+    document.getElementById("progressPercent")
+        .innerText =
+        progress + "%";
+
+
+    document.getElementById("progressFill")
+        .style.width =
+        progress + "%";
+
+
+
+    /* TIMELINE */
+
+    const timeline =
+        document.getElementById("timeline");
+
+
+    timeline.innerHTML = "";
+
+
+    stages.forEach(
+        function(stage, index) {
+
+            const item =
+                document.createElement("div");
+
+
+            item.className =
+                "timeline-item";
+
+
+            if (index < currentStage) {
+
+                item.classList.add(
+                    "completed"
+                );
+
+            }
+
+
+            if (index === currentStage) {
+
+                item.classList.add(
+                    "current"
+                );
+
+            }
+
+
+            let statusText =
+                "Upcoming";
+
+
+            if (index < currentStage) {
+
+                statusText =
+                    "Completed";
+
+            }
+
+
+            if (index === currentStage) {
+
+                statusText =
+                    "Current Stage";
+
+            }
+
+
+            item.innerHTML =
+
+                '<div class="timeline-icon">' +
+
+                stage.icon +
+
+                '</div>' +
+
+                '<div class="timeline-content">' +
+
+                '<h3>' +
+
+                stage.title +
+
+                '</h3>' +
+
+                '<p>' +
+
+                stage.description +
+
+                '</p>' +
+
+                '<p><strong>' +
+
+                statusText +
+
+                '</strong></p>' +
+
+                '</div>';
+
+
+            timeline.appendChild(item);
+
+        }
+    );
+
+
+
+    /* PAYMENT STATUS */
+
+    const paymentBox =
+        document.getElementById("paymentBox");
+
+
+    const paymentStatus =
+        document.getElementById("paymentStatus");
+
+
+    paymentBox.classList.remove(
+        "completed"
+    );
+
+
+    if (currentStage < 4) {
+
+        paymentStatus.innerText =
+            "⏳ Payment will begin after the produce is accepted.";
+
+    }
+
+
+    else if (currentStage === 4) {
+
+        paymentStatus.innerText =
+            "🔄 Your payment is currently being processed.";
+
+    }
+
+
+    else {
+
+        paymentBox.classList.add(
+            "completed"
+        );
+
+
+        paymentStatus.innerText =
+            "✅ Payment Completed Successfully. The procurement process is complete.";
+
+    }
+
+
+
+    /* NEXT BUTTON */
+
+    const nextButton =
+        document.getElementById(
+            "nextStageButton"
+        );
+
+
+    if (
+        currentStage === stages.length - 1
+    ) {
+
+        nextButton.innerText =
+            "✅ Procurement Completed";
+
+        nextButton.disabled = true;
+
+        nextButton.style.opacity = "0.6";
+
+        nextButton.style.cursor = "not-allowed";
+
+    }
+
+
+    else {
+
+        nextButton.innerText =
+            "➡️ Move to Next Stage";
+
+        nextButton.disabled = false;
+
+        nextButton.style.opacity = "1";
+
+        nextButton.style.cursor = "pointer";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   MOVE TO NEXT STAGE
+========================================================= */
+
+document
+    .getElementById("nextStageButton")
+    ?.addEventListener(
+        "click",
+        function() {
+
+            if (
+                currentStage <
+                stages.length - 1
+            ) {
+
+                currentStage++;
+
+
+                localStorage.setItem(
+                    "trackingStage",
+                    currentStage
+                );
+
+
+                renderTracking();
+
+            }
+
+        }
+    );
+
+
+
+/* =========================================================
+   RESET DEMO
+========================================================= */
+
+document
+    .getElementById("resetButton")
+    ?.addEventListener(
+        "click",
+        function() {
+
+            currentStage = 0;
+
+
+            localStorage.setItem(
+                "trackingStage",
+                currentStage
+            );
+
+
+            renderTracking();
+
+
+            alert(
+                "🔄 Tracking has been reset to Slot Booked."
+            );
+
+        }
+    );
+
+
+</script>
+
+
+</body>
+
+</html>
